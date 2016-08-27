@@ -10,7 +10,7 @@ The repository is composed of three directories:
 
 ## Administrators
 
-These documents concern CSF crew, particular with respect to platform development and maintenance.
+These documents concern CSF crew, particularly with respect to platform development and maintenance.
 
 ## Authors
 
