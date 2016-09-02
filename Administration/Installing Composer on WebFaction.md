@@ -1,6 +1,6 @@
 # Installing Composer on the WebFaction
 
-Different web hosts might have different ticks and bugaboos to consider, but for WebFaction, our host, installation was super easy.
+Different web hosts might have different requirements to consider, but for WebFaction, our host, installation was easy.
 
 First, tunnel into the server via ssh. Then ensure you're in the $HOME location (i.e. account root: home/[username]). Then run the following six commands (each line is a separate command), one at a time:
 
