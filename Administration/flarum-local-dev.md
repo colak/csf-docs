@@ -1,6 +1,8 @@
-Our discussion boards are powered by Flarum and published at https://discussion.csf.commuity.
+### Flarum – local development
 
-Flarum requires Composer to install and update the core, as well to install and update extensions. Likewise, there are some particular steps to be aware of in the dev-to-production workflow. This doc quickly outlines it all.
+Our [csf-discussion](https://github.com/content-strategy-forum/csf-discussion) boards are powered by [Flarum](https://discuss.flarum.org/) and published at https://discussion.csf.commuity.
+
+Flarum requires [Composer](https://getcomposer.org) to install and update the core, as well to install and update extensions. Likewise, there are some particular steps to be aware of in the dev-to-production workflow. This doc quickly outlines it all.
 
 Considering how popular Composer is as a package manager, it wouldn't hurt to install it on your local setup whether you use it for Flarum or not. At least you'll have it when you do need it. But since you will need it if you're to help with discussion boards development, let's start with installing Compoer first.
 
