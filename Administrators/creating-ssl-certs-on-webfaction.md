@@ -1,6 +1,6 @@
 # Installing LetsEncrypt SSL Certificates on WebFaction
 
-[Let’s Encrypt](https://letsencrypt.org/) provides free Secure Socket Layer (SSL) certificates; those things that put the “s” in the “https://“ of your website URLs. Because they are free, there’s a limit to how many certificates you can get in a given period of time, and their validy periods have to be updated on a regular basis.
+[Let’s Encrypt](https://letsencrypt.org/) provides free Secure Socket Layer (SSL) certificates; those things that put the “s” in the “https://“ of your website URLs. Because they are free, there’s a limit to how many certificates you can get in a given period of time, and their validity periods have to be updated on a regular basis.
 
 WebFaction, our web host, allows use of Let’s Encrypt to setup SSL certificates, but, at the time this doc is written, there is no easy process for doing via the WebFaction dashboard (though that does seem to be coming). In the meantime, you can set the SSL certificates up manually. 
 
