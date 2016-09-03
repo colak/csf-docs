@@ -113,7 +113,9 @@ Finally, create a [WebFaction Support Ticket](https://help.webfaction.com/) to h
 > Please install the certificate under "~/.acme.sh/domain.tld”
 for the website "mysite_ssl".
 
-But replace "domain.tld” with your actual domain, and "mysite_ssl" with the name of your HTTPS website. Of course, do that for each domain you might have created certificates for.
+Replace "domain.tld” with your actual domain, and "mysite_ssl" with the name of your HTTPS website. 
+
+Of course, do that for each domain you might have created certificates for.
 
 
 
