@@ -24,9 +24,21 @@ But to have SSL certificates on top of the Class CNAME redirects, WebFaction req
 * **csf_www** = http://www.csf.community (CNAME record)
 * **csf_www_ssl** = https://www.csf.community (CNAME record)
 
-Now, no matter which one of those URLs you click, the destination should always end up being https://csf.community. 
+The associated mod_rewrite rules in your _.htaccess_ file should be:
 
-So if you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup _before_ proceeding with Let’s Encrypt. 
+```
+## Class B (no www) redirects
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+## Redirects for http to https
+RewriteCond %{HTTP:X-Forwarded-SSL} !on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+```
+
+Now, no matter which one of those URLs you click above, the destination should always end up being https://csf.community. 
+
+So if you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup in the WebFaction dashboard _before_ proceeding with Let’s Encrypt. 
 
 **WebFaction vocabulary:** In WebFaction parlance, a “domain” means what you would expect, something of the form _domain.tld_. And a “website” is a name you give that domain record to conveniently reference it in the WebFaction dashboard. For example, CSF’s main site has the domain, _csf.community_, and we’ve named it “csf”. Finally, a “webapp” (or “application”) is any kind of software you have installed in your domain directory.
 
