@@ -8,11 +8,9 @@ Having learned the process between [this WebFaction community doc](https://commu
 
 ## 1) Make sure your WebFaction “domains” and “websites” are correct
 
-Some may laugh at this initial reality check, but from the process of setting up SSL certificates for CSF, it was discovered that CSF domains weren’t setup in the way we thought they were and wanted. (We “blame” WebFaction’s unconventional dashboard design. But, all good.)
- 
-In WebFaction parlance, a “domain” means what you would expect, something of the form _domain.tld_. And a “website” is a name you give that domain to conveniently reference the record in the WebFaction dashboard. For example, CSF’s main site has the domain, _csf.community_, and we’ve named it “csf”. Finally, a “webapp” (or “application”) is any kind of software you have installed in your domain directory.
+Some may laugh at this initial reality check, but from the process of setting up SSL certificates for CSF, it was discovered that some domain configurations were amiss. (We “blame” WebFaction’s unconventional dashboard design. But, all good.)
 
-In CSF’s situation, we don’t like using “www”. Site visitors should get _csf.community/_ (without “www”) whether they added “www” or not in the URL. To do this, we must have a CNAME record setup in the WebFaction dashboard, _in addition_ to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize this CNAME requirement before.
+In our case, we don’t like using “www”. Site visitors should get _csf.community/_ (without “www”) whether they added “www” or not in the URL. To do this, we must have a CNAME record setup in the WebFaction dashboard, _in addition_ to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize this CNAME requirement before.
 
 So, at minimum, for every domain, we need two website names, one for the target domain and one for the CNAME record. Ours, for example:
 
@@ -27,6 +25,8 @@ But to have SSL certificates on top of the Class CNAME redirects, WebFaction req
 * **csf_www_ssl** = https://www.csf.community (CNAME record)
 
 You need to make sure those are all setup in advance _before_ proceeding with Let’s Encrypt.
+
+**Side for CSF admins:** In WebFaction parlance, a “domain” means what you would expect, something of the form _domain.tld_. And a “website” is a name you give that domain to conveniently reference the record in the WebFaction dashboard. For example, CSF’s main site has the domain, _csf.community_, and we’ve named it “csf”. Finally, a “webapp” (or “application”) is any kind of software you have installed in your domain directory.
 
 ## 2) Create a new Let’s Encrypt webapp
 
