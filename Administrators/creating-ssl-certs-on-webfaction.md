@@ -12,7 +12,7 @@ Some may laugh at this initial reality check, but from the process of setting up
  
 In WebFaction parlance, a “domain” means what you would expect, something of the form _domain.tld_. And a “website” is a name you give that domain to conveniently reference the record in the WebFaction dashboard. For example, CSF’s main site has the domain, _csf.community_, and we’ve named it “csf”. Finally, a “webapp” (or “application”) is any kind of software you have installed in your domain directory.
 
-In CSF’s situation, we don’t like using “www”. We want all calls to _www.csf.community/_ to go to _csf.community/_ (without “www”), and that’s how site visitors will see the URLs whether they added “www” or not. To do this, we must have a CNAME record setup in the WebFaction dashboard, _in addition_ to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize this CNAME requirement before.
+In CSF’s situation, we don’t like using “www”. Site visitors should get _csf.community/_ (without “www”) whether they added “www” or not in the URL. To do this, we must have a CNAME record setup in the WebFaction dashboard, _in addition_ to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize this CNAME requirement before.
 
 So, at minimum, for every domain, we need two website names, one for the target domain and one for the CNAME record. Ours, for example:
 
