@@ -17,16 +17,18 @@ So, at minimum, for every domain, we need two website names, one for the target 
 * **csf** = http://csf.community (target domain)
 * **csf_www** = http://www.csf.community (CNAME record)
 
-But to have SSL certificates on top of the Class CNAME redirects, WebFaction requires _four_ website records — two for each domain type. I find it helpful to name them systematically as:
+But to have SSL certificates on top of the Class CNAME redirects, WebFaction requires _four_ website records — two for each domain type. We’ve named them systematically as:
 
 * **csf** = http://csf.community (Not secured)
 * **csf_ssl** = https://csf.community (Secured, our final destination)
 * **csf_www** = http://www.csf.community (CNAME record)
 * **csf_www_ssl** = https://www.csf.community (CNAME record)
 
-You need to make sure those are all setup in advance _before_ proceeding with Let’s Encrypt.
+Now, no matter which one of those URLs you click, the destination should always end up being https://csf.community. 
 
-**Side for CSF admins:** In WebFaction parlance, a “domain” means what you would expect, something of the form _domain.tld_. And a “website” is a name you give that domain to conveniently reference the record in the WebFaction dashboard. For example, CSF’s main site has the domain, _csf.community_, and we’ve named it “csf”. Finally, a “webapp” (or “application”) is any kind of software you have installed in your domain directory.
+So if you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup _before_ proceeding with Let’s Encrypt. 
+
+**WebFaction vocabulary:** In WebFaction parlance, a “domain” means what you would expect, something of the form _domain.tld_. And a “website” is a name you give that domain record to conveniently reference it in the WebFaction dashboard. For example, CSF’s main site has the domain, _csf.community_, and we’ve named it “csf”. Finally, a “webapp” (or “application”) is any kind of software you have installed in your domain directory.
 
 ## 2) Create a new Let’s Encrypt webapp
 
