@@ -80,7 +80,7 @@ First, change-directory into _/src_:
 
 `cd $HOME/src`
 
-Then run the following single command, where `NNNNN` is the port number from step 2 and `domain.tld` is the appropriate domain in focus.:
+Then run the following single command, where `NNNNN` is the port number from step 2 and `domain.tld` is the appropriate domain in focus:
 
 	Le_HTTPPort=NNNNN acme.sh --test --issue -d domain.tld -d www.domain.tld --standalone
 
@@ -88,7 +88,7 @@ If you were doing more than one domain at once (i.e. `domain1.tld`, `domain2.tld
 
 This command instructs _acme.sh_ to bind to port NNNNN (the letsencrypt_validation custom application port), thus proving to the Certificate Authority that you control the domains for which you are issuing a certificate. 
 
-If all goes well, you'll see a return message in the command-line client that the new certificate was successfully issued and stored in _~/.acme.sh/domain.tld_.
+If all goes well, you'll see a return message in the command-line client indicating the new certificate was successfully issued and stored in _~/.acme.sh/domain.tld_.
 
 That was just a test certificate -- you can't actually use it. But now that you know that certificate can be issued without errors, you're ready to issue it for real. 
 
