@@ -36,7 +36,7 @@ Now you’ll create a new application that can be used for _all certificates now
 
 In the **Applications** panel, under **Domains / Websites** of the WebFaction dashboard, create a new application as:
 
-* name: letsencrypt_validation
+* name: “letsencrypt_validation”
 * category: Custom
 * type: Custom app (listening on port)   
 
@@ -80,11 +80,11 @@ First, change-directory into _/src_:
 
 `cd $HOME/src`
 
-Then run the following single command (yes, it’s long and wrapping), where “NNNNN” is the port number from step 2 and “domain.tld” is the appropriate domain in focus.:
+Then run the following single command, where `NNNNN` is the port number from step 2 and `domain.tld` is the appropriate domain in focus.:
 
 	Le_HTTPPort=NNNNN acme.sh --test --issue -d domain.tld -d www.domain.tld --standalone
 
-If you were doing more than one domain at once, you could add as many `-d domain.tld` entries as needed in series in that command, or you can simply run the command separate for each domain. Whatever. For testing, it’s better to work with one domain at a time.
+If you were doing more than one domain at once (i.e. `domain1.tld`, `domain2.tld`, etc), you could add as many `-d` entries as needed in series, or you can simply run the command separate for each domain. Whatever. For testing, it might be better to work with one domain at a time.
 
 This command instructs _acme.sh_ to bind to port NNNNN (the letsencrypt_validation custom application port), thus proving to the Certificate Authority that you control the domains for which you are issuing a certificate. 
 
