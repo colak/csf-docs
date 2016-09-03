@@ -4,7 +4,7 @@
 
 WebFaction, our web host, allows use of Let’s Encrypt to setup SSL certificates, but, at the time this doc is written, there is no easy process for doing via the WebFaction dashboard (though that does seem to be coming). In the meantime, you can set the SSL certificates up manually. 
 
-Between [this WebFaction community doc](https://community.webfaction.com/questions/19988/using-letsencrypt) and a ticket to WebFaction support, we outline the process here, as was done for https://csf.community and https://discussion.csf.community. 
+Having learned the process between [this WebFaction community doc](https://community.webfaction.com/questions/19988/using-letsencrypt) and a ticket to WebFaction support, we can walk you through it now, as was done to setup https://csf.community and https://discussion.csf.community. 
 
 ## 1) Make sure your WebFaction “domains” and “websites” are correct
 
