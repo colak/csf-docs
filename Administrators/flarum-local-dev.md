@@ -1,12 +1,19 @@
 # Flarum: local install and development
 
-Our [Content Strategy Discussion](https://discussion.csf.commuity) boards are powered by [Flarum](https://discuss.flarum.org/). Flarum requires [Composer](https://getcomposer.org) to install and update the core, as well to install and update extensions. Likewise, there are some particular steps to be aware of in the dev-to-production workflow. This doc outlines getting setup on local development. See also **Flarum: local-to-production workflow**.
+Our [Content Strategy Discussion](https://discussion.csf.commuity) boards are powered by [Flarum](https://discuss.flarum.org/). Flarum requires [Composer](https://getcomposer.org) to install and update the core while in beta development, as well to install and update extensions. Likewise, there are some particular steps to be aware of in the dev-to-production workflow. This doc outlines getting setup on local development. See also **Flarum: local-to-production workflow**.
 
-**Note:** these instructions assume you already have a local AMP stack environment setup and working, and that you know how to clone a GitHub repository to yoru local machine. (Local dev setup and GitHub use is out of scope here, but you would need to have both in place before bothering with these instructions.) Also, these instructions assume an OS X operating system, but you could adjust if yours is different. Likewise, these instructions assume your development root is at /Users/username/Sites (where "username" is your actual username), but you could adjust for wherever your dev root is.
+## Assumptions
+
+These instructions make a couple of assumptions:
+
+1. That you already have a local AMP stack environment setup and working, and that you know how to clone a GitHub repository to your local machine. Both are out of scope here, but you need to have them in place before continuing. 
+2. That you’re using a Mac operating system, and that your development root is at _/Users/username/Sites/discussion_, where "username" is your actual username, and “discussion” is the Flarum install directory. But you could adjust for whatever operating system you use.
+
+If you’re good to go, let’s hit it!
 
 ## Installing Composer
 
-Considering how popular Composer is as a package manager, it wouldn't hurt to install it on your local setup whether you use it for Flarum or not. You would at least have it when you do need it, if ever. But since you will need Composer to help with discussion boards development, let's install it.
+Flarum makes use of Composer, and may continue to do so into the future. If you want to fiddle with Flarum, you’ll need to install Composer.
 
 First use [Composer’s download commands](https://getcomposer.org/download/), then use [Composer's OS X install instructions](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx) for your local setup. 
 
@@ -22,7 +29,9 @@ While you can install Flarum from Flarum's source as described below, it's advis
 
 To install from source, Use Terminal to get into the local directory where you want to install the Flarum app. (In these instructions we'll use the directory at _/Users/username/Sites/discussion_). Then, using [Flarum's install instructions](http://flarum.org/docs/installation/), run this command:
 
-`composer create-project flarum/flarum . --stability=beta`
+```
+composer create-project flarum/flarum . --stability=beta
+```
 
 **Attention:** The above command is for the beta 5 release. Ensure the command is correct for any later version by verifying from Flarum’s install instructions!
 
