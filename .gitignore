@@ -1,0 +1,7 @@
+*~
+
+# Ignore .DS_Store files anywhere they might be
+.DS_Store
+Administrators/.DS_Store
+Contributors/.DS_Store
+Organizers/.DS_Store
