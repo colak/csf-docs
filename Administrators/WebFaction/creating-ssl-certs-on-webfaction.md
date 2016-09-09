@@ -157,7 +157,7 @@ Replace "domain.tld” with your actual domain, and "mysite_ssl" (if you named i
 
 ## 8) Certificate renewal dates and notifications
 
-Let’s Encrypt certificates expire after 80 days, and renewal notices are sent to you three different times in advance: 20 days, 10 days, and finally 1 day, or until you renew your certs, whichever comes first. That’s all at Let’s Encrypt’s end.
+Let’s Encrypt certificates expire after 80 days, and [renewal notices](https://letsencrypt.org/docs/expiration-emails/) are sent to you three different times in advance: 20 days, 10 days, and finally 1 day, or until you renew your certs, whichever comes first. That’s all at Let’s Encrypt’s end.
 
 But maybe you think that first 20-day notice is a little much, or even the second 10-day notice. While you can’t actually tell Let’s Encrypt when to notify you, you can make your renewal time  earlier than 80 days (not longer, sorry) to influence the notification pattern. Do this by running the following command, where “DD” is the number of days less than 80 that you want to renew your certs:
 
