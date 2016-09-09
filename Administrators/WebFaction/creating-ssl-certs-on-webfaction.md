@@ -171,7 +171,7 @@ For example, let’s say you don’t want a notice sooner than 5 days before the
 
 Cert expiration dates are now at 65 days instead of 80, and the first renewal notice comes 5 days before they expire, and again at 1 day if you don’t renew within the first 4 days of the first notice. 
 
-It works because Let’s Encrypt doesn’t know or care that you’ve changed the acme.sh script to renew your certs earlier than 80 days. By forcing a renewal date to 65 days, you cut into Let’s Encrypt’s three notifications periods; effectively bumping the first two out and creating a new first one at day 5.
+It works because Let’s Encrypt doesn’t know or care that you’ve changed the acme.sh script to renew your certs earlier than 80 days. By forcing a renewal date to 65 days, you cut into Let’s Encrypt’s three notifications periods by 15 days; effectively bumping the first two out and creating a new first one at day 5.
 
 ## Keep your script updated!
 
