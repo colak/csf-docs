@@ -173,7 +173,7 @@ This will result in getting a renewal notice 5 days before the expiration date, 
 
 ## Keep your script updated!
 
-The [acme.sh script](https://github.com/Neilpang/acme.sh) is continually being improved by it’s developer, @Neilpang, who is dedicted to it. You’re advised to update it before each time you use it. Run:
+The [acme.sh script](https://github.com/Neilpang/acme.sh) is continually being improved by it’s developer, Neil Pang, who is dedicted to it. You’re advised to update the script prior to using it each time you create certs for different domains. Upgrade using:
 
 `acme.sh --upgrade`
 
@@ -181,7 +181,7 @@ If that doesn’t work, you probably have too old of version and need to reinsta
 
 `curl https://get.acme.sh | sh`
 
-Thereafter, you should be able to update the script as normal with the upgrade command. 
+Thereafter, you should be able to update the script as normal with the previous command. 
 
 
 
