@@ -159,17 +159,17 @@ Replace "domain.tld” with your actual domain, and "mysite_ssl" (if you named i
 
 Let’s Encrypt certificates expire after 80 days, and [renewal notices](https://letsencrypt.org/docs/expiration-emails/) are sent to you three different times in advance: 20 days, 10 days, and finally 1 day, or until you renew your certs, whichever comes first. That’s all at Let’s Encrypt’s end.
 
-But maybe you think that first 20-day notice is a little much, or even the second 10-day notice. While you can’t actually tell Let’s Encrypt when to notify you, you can make your renewal time  earlier than 80 days (not longer, sorry) to influence the notification pattern. Do this by running the following command, where “DD” is the number of days less than 80 that you want to renew your certs:
+But maybe you think the first 20-day notice is a little much, and the 10- and 1-day notices are enough. Or maybe just a 5-day notice is all you need to spring into action. While you can’t actually tell Let’s Encrypt when to notify you, you can make your renewal time  earlier than 80 days (not longer, sorry) to influence the notification pattern. Do this by running the following command, where “DD” is the number of days less than 80 that you want to renew your certs:
 
 `acme.sh --renew -d mydomain.com --days DD --force`
 
 The command will force update your installed acme.sh script by changing the default 80 renewal period to the earlier number of days you want.
 
-For example, let’s say you don’t want a notice sooner than 5 days before the expiration period is up. To get a 5-day notice, you need to bump up the renewal date 15 days (i.e. DD=65) to cut into the  20- and 10-day notice periods (20-15=5 days). So plug 65 into the command:
+For example, let’s say you don’t want a notice sooner than 5 days before the expiration period is up. To get a 5-day notice, you need to bump up the renewal date 15 days (i.e. DD=65) to cut into the  20- and 10-day notice periods (20-15=5 days). So run the command using 65:
 
 `acme.sh --renew -d domain.tld --days 65 --force` 
 
-Cert expiration dates are now at 65 days instead of 80, and the first renewal notice comes 5 days before they expire, and again at 1 day if you don’t renew within the first 4 days of the first notice. 
+Now the cert expiration dates happen 65 days later instead of the default 80, and the first renewal notice comes 5 days before they expire, and again at 1 day if you don’t renew certs within the first 4 days of the first notice. 
 
 It works because Let’s Encrypt doesn’t know or care that you’ve changed the acme.sh script to renew your certs earlier than 80 days. By forcing a renewal date to 65 days, you cut into Let’s Encrypt’s three notifications periods by 15 days; effectively bumping the first two out and creating a new first one at day 5.
 
