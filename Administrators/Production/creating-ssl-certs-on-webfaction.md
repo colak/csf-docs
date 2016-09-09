@@ -1,23 +1,35 @@
 # Installing LetsEncrypt SSL Certificates on WebFaction
 
-[Let’s Encrypt](https://letsencrypt.org/) provides free Secure Socket Layer (SSL) certificates; those things that put the “s” in the “https://“ of your website URLs. Because they are free, there’s a limit to how many certificates you can get in a given period of time, and their validity periods have to be updated on a regular basis.
+[Let’s Encrypt](https://letsencrypt.org/) provides free Secure Socket Layer (SSL) certificates; those things that put the “s” in the “https://“ of your website URLs. Because they are free, there are some [rate limits](https://letsencrypt.org/docs/rate-limits/) to be aware of:
 
-WebFaction, our web host, allows use of Let’s Encrypt to setup SSL certificates, but, at the time this doc is written, there is no easy process for doing via the WebFaction dashboard (though that does seem to be coming). In the meantime, you can set the SSL certificates up manually. 
+* 20 certificates per week for registered domain (i.e. _domain.tld_)
+* 100 names (e.g., subdomains) per certificate. (If combined with the above limit, you can issue certificates containing up to 2,000 unique subdomains per week.)
+* 5 certificates per week for duplicate certificates (i.e. contain the exact same set of hostnames, ignoring capitalization and ordering of hostnames)
 
-Having learned the process between [this WebFaction community doc](https://community.webfaction.com/questions/19988/using-letsencrypt) and a ticket to WebFaction support, we can walk you through it now, as was done to setup https://csf.community and https://discussion.csf.community. 
+Even if you’re well under the first two limits, you have to be careful about the third rate limit, duplicate certs, because 5 is a low limit. This is why you should always use the staging (test) procedure when requesting or renewing certs, to make sure you don’t accidently use up your limit needlessly when walking through this process. The test procedure is covered in these instructions.
+
+## Specifics regarding WebFaction hosting
+
+WebFaction (CSF’s web host) allows use of Let’s Encrypt to setup SSL certificates, but at the time this doc is written, there is no easy process for doing it via the WebFaction dashboard. (Though there is talk in WF discussions that it may be coming.) In the meantime, you can set the SSL certificates up manually. 
+
+The process described here is based on [this WebFaction community doc](https://community.webfaction.com/questions/19988/using-letsencrypt), support from WebFaction directly, and tips from the developer of the acme.she scipt, described later. 
+
+This tutorial walks through the process as it was done to setup certs for https://csf.community and https://discussion.csf.community. 
 
 ## 1) Make sure your WebFaction “domains” and “websites” are correct
 
-Some may laugh at this initial reality check, but from the process of setting up SSL certificates for CSF, it was discovered that some domain configurations were amiss. (We “blame” WebFaction’s unconventional dashboard design. But, all good.)
+This may not concern your situation, but just for the record…
 
-In our case, we don’t like using “www”. Site visitors should get _csf.community/_ (without “www”) whether they added “www” or not in the URL. To do this, we must have a CNAME record setup in the WebFaction dashboard, _in addition_ to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize this CNAME requirement before.
+From the process of setting up SSL certificates for CSF, it was discovered that some of CSF’s domain configurations were amiss. (WebFaction’s unconventional dashboard design can do that. But, all good.)
 
-So, at minimum, for every domain, we need two website names, one for the target domain and one for the CNAME record. Ours, for example:
+In our case, we don’t like using “www”. Site visitors should land at _csf.community/_ (without “www”) whether they added “www” or not in the URL. This is called a Class B redirect. To set a Class B up on WebFaction, you must have a CNAME record in the WebFaction dashboard, _in addition_ to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize the CNAME requirement before, and couldn’t proceed with creating Let’s Encrypt certifications until the CNAME records were setup.
+
+At minimum, for every domain, we needed two website names, one for the target domain and one for the CNAME record. CSF’s, for example:
 
 * **csf** = http://csf.community (target domain)
 * **csf_www** = http://www.csf.community (CNAME record)
 
-But to have SSL certificates on top of the Class CNAME redirects, WebFaction requires _four_ website records — two for each domain type. We’ve named them systematically as:
+But to have SSL certificates on top of the Class B CNAME redirects, WebFaction requires _four_ website records — two for each domain type. We’ve created and named the records as:
 
 * **csf** = http://csf.community (Not secured)
 * **csf_ssl** = https://csf.community (Secured, our final destination)
@@ -38,13 +50,13 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 Now, no matter which one of those URLs you click above, the destination should always end up being https://csf.community. 
 
-So if you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup in the WebFaction dashboard _before_ proceeding with Let’s Encrypt. 
+If you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup in the WebFaction dashboard _before_ proceeding with Let’s Encrypt. 
 
-**WebFaction vocabulary:** In WebFaction parlance, a “domain” means what you would expect, something of the form _domain.tld_. And a “website” is a name you give that domain record to conveniently reference it in the WebFaction dashboard. For example, CSF’s main site has the domain, _csf.community_, and we’ve named it “csf”. Finally, a “webapp” (or “application”) is any kind of software you have installed in your domain directory.
+**WebFaction vocabulary:** In WebFaction parlance, a “domain” is what you would expect (e.g. _domain.tld_), and a “webapp” (or application) is any kind of software you have installed in your domain’s directory. In relation, a “website” is a name you give that domain record to conveniently reference it in the WebFaction dashboard. For example, the four bold names in the list above are website names, and _csf_ssl_ and _csf_www_ssl_ are the ones CSF needed to inform WebFaction about, as described later in step 7.
 
 ## 2) Create a new Let’s Encrypt webapp
 
-Now you’ll create a new application that can be used for _all certificates now and in the future_. You do not need to create a separate app for each of your websites!
+Now you’ll create a new WebFaction application that can be used for creating the certificates you need now and in the future. You do not need to create a separate app for each of your websites!
 
 In the **Applications** panel, under **Domains / Websites** of the WebFaction dashboard, create a new application as:
 
@@ -58,21 +70,27 @@ When created, click the app’s name in the app list to see its properties, and 
 
 ## 3) Install acme.sh
 
-Now you’re going to install **acme.sh**, a “pure-shell” implementation of the [Automatic Certificate Management Environment](https://github.com/ietf-wg-acme/acme) (ACME). This will organize all your certificates, when you generate them, and will create a cron job to automatically check your certificates for renewal. (Inspect your crontab to see it, if you want.)
+Now you’re going to install **acme.sh**, a “pure-shell” implementation of the [Automatic Certificate Management Environment](https://github.com/ietf-wg-acme/acme) (ACME). This will organize all your certificates, when you generate them, and will create a cron job to automatically check your certificates for renewal (inspect your crontab to see it, if you want). By adding an email address, it will notify you in advance of when certificates will expire.
 
 Process:
 
-Tunnel into the WebFaction server via SSH, then run the following series of commands, one at a time:
+Tunnel into the WebFaction server via SSH, then run the following series of commands, one at a time (edit the email address in the last command to what you need):
 
 1. `mkdir -p $HOME/src`
 1. `cd $HOME/src`
 1. `git clone 'https://github.com/Neilpang/acme.sh.git'`
 1. `cd ./acme.sh`
-1. `./acme.sh --install`
+1. `./acme.sh --install --accountemail username@email.tld`
 
-The "install" routine creates a directory at _~/.acme.sh/_, in which all your certificates will go in respective sub-directories according to the domains you identify in the next step. 
+The "install" routine creates a directory at _~/.acme.sh/_, in which all your certificates will go in respective sub-directories according to the domains you identify in the next section. The email allows you to be notified by Let’s Encrypt in advance of cert expiration times. 
 
-After doing this install, exit your SSH connection and reconnect again. 
+Presumably you _want_ to be notified of your expiration dates, but if not you, use this command for the last line instead and you won’t get any:
+
+`./acme.sh --install`
+
+(See section 8 about renewal dates and notification intervals.)   
+
+**Important:** After doing this install, exit your SSH connection and reconnect again. 
 
 ## 4) Mount the letsencrypt_validation app
 
@@ -102,21 +120,27 @@ This command instructs _acme.sh_ to bind to port NNNNN (the letsencrypt_validati
 
 If all goes well, you'll see a return message in the command-line client indicating the new certificate was successfully issued and stored in _~/.acme.sh/domain.tld_.
 
-That was just a test certificate -- you can't actually use it. But now that you know that certificate can be issued without errors, you're ready to issue it for real. 
+That was just a test certificate -- you can't actually use it. But now that you know the certificate can be issued without errors, you're ready to issue it for real.
+
+But first remove the directory containing the test certificate that was created during the test run:
+
+`rm -r $HOME/.acme.sh/domain.tld` 
 
 ## 6) Create the real SSL certificate(s)
 
-Delete the directory containing the test certificate created in step 5:
+Now you’re going to create the real certificate(s). Unlike the test run before, this counts against the weekly rate limits set by Let’s Encrypt. If you make a mistake and have to redo it, the redo will count against your limit of 5 duplicate certification requests for the week.
 
-`rm -r $HOME/.acme.sh/domain.tld`
+If you’re not already there, change-directory into _/src_:
 
-Presumably you’re still in _$HOME/src_, where you need to be (if not, get back in there), so then run the generation command again, but this time _without_ the `--test` part:
+`cd $HOME/src`
+
+Then run the Let’s Encrypt generation command again with the same port number, but this time _without_ the `--test` part:
 
 ```
-Le_HTTPPort=77777 acme.sh --issue -d domain.tld -d www.domain.tld --standalone
+Le_HTTPPort=NNNNN acme.sh --issue -d domain.tld -d www.domain.tld --standalone
 ```
 
-You should achieve the same result as previously with the test, except now you have a real, working certificate(s), ready for installation.
+You should achieve the same result as previously with the test, except now you have working certificate(s) ready for installation.
 
 Before proceeding with installation, return to your **Websites** list in the WebFaction dashboard, and switch your site(s) back to your original application so that it's no longer serving the "letsencrypt_validation" custom app. This brings your site back online.
 
@@ -127,9 +151,45 @@ Finally, create a [WebFaction Support Ticket](https://help.webfaction.com/) to h
 > Please install the certificate under "~/.acme.sh/domain.tld”
 for the website "mysite_ssl".
 
-Replace "domain.tld” with your actual domain, and "mysite_ssl" with the name of your HTTPS website. 
+Replace "domain.tld” with your actual domain, and "mysite_ssl" (if you named it that way) with the name of your HTTPS website. Of course, do that for each domain you might have created certificates for.
 
-Of course, do that for each domain you might have created certificates for.
+**Note:** at this point in time you still have to contact WebFaction as described when renewing the certificates too. In that case, just a support ticket again with the same details about domain directory and website name is all you need to do. No running commands yourself to update certificates. 
+
+## 8) Certificate renewal dates and notifications
+
+Let’s Encrypt certificates expire after 80 days(?), and a renewal notice is sent to you 20 days in advance by default. That all at Let’s Encrypt’s end.
+
+You can change the acme.sh script to force a different renewal time to an _earlier_ date by updating your acme.sh script with the following command, where “DD” is whatever number of days you  want less than 80:
+
+`acme.sh --renew -d mydomain.com  --days DD  --force`
+
+The reason you might do this is if you don’t like having such an early notice about the cert’s normal expiration date. In which case, by forcing an earlier renewal time via the acme.sh script itself, you shorten the interval between receiving Let’s Encrypt’s default notice and the time you want to renew. 
+
+For example, let’s say you only want a 5-day notice instead of the default 20. You can force update your acme.sh script already installed to thereafter renew certificates 15 days earlier using this command:
+
+`acme.sh --renew -d domain.tld --days 65 --force` 
+
+Let’s Encrypt doesn’t know any different so it still sends a notice to you at the default time (20 days before the 80-day duration). You shorten the notice interval at your end forcing a renewal date to 65 days instead of 80, giving the 5-day heads up in your inbox.
+
+**Don’t want that notification after all?**
+
+Perhaps you don’t even like being notified — living life on the edge. In that case, don’t change the renewal time as described. Instead, run this command to remove your email address from the acme.sh script:
+
+`????`
+
+Now your certificates will expire in 80 days as normal, and you’ll never be the wiser by notification.
+
+## Keep your script updated!
+
+The [acme.sh script](https://github.com/Neilpang/acme.sh) is continually being improved by it’s developer, @Neilpang, who is dedicted to it. You’re advised to update it before each time you use it. Run:
+
+`acme.sh --upgrade`
+
+If that doesn’t work, you probably have too old of version and need to reinstall the script using this:
+
+`curl https://get.acme.sh | sh`
+
+Thereafter, you should be able to update the script as normal with the upgrade command. 
 
 
 
