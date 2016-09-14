@@ -77,14 +77,14 @@ Process:
 Tunnel into the WebFaction server via SSH, then run the following series of commands, one at a time (edit the email address in the last command to what you need):
 
 1. `mkdir -p $HOME/src`
-1. `cd $HOME/src`
-1. `git clone 'https://github.com/Neilpang/acme.sh.git'`
-1. `cd ./acme.sh`
-1. `./acme.sh --install --accountemail username@email.tld`
+2. `cd $HOME/src`
+3. `git clone 'https://github.com/Neilpang/acme.sh.git'`
+4. `cd ./acme.sh`
+5. `./acme.sh --install --accountemail username@emaildomain.tld`
 
 The "install" routine creates a directory at _~/.acme.sh/_, in which all your certificates will go in respective sub-directories according to the domains you identify in the next section. The email allows you to be notified by Let’s Encrypt in advance of cert expiration times. 
 
-Presumably you _want_ to be notified of your expiration dates, but if not you, use this command for the last line instead and you won’t get any:
+Presumably you _want_ to be notified of your expiration dates, but if not, use this command instead of the last line above and you won’t get any:
 
 `./acme.sh --install`
 
@@ -169,9 +169,11 @@ For example, let’s say you don’t want a notice sooner than 5 days before the
 
 `acme.sh --renew -d domain.tld --days 65 --force` 
 
-Now the cert expiration dates happen 65 days later instead of the default 80, and the first renewal notice comes 5 days before they expire, and again at 1 day if you don’t renew certs within the first 4 days of the first notice. 
+Now the certificates expire after 65 days instead of the default 80, and the first renewal notice comes 5 days before they expire, and again at 1 day if you don’t renew certificates first. 
 
-It works because Let’s Encrypt doesn’t know or care that you’ve changed the acme.sh script to renew your certs earlier than 80 days. By forcing a renewal date to 65 days, you cut into Let’s Encrypt’s three notifications periods by 15 days; effectively bumping the first two out and creating a new first one at day 5.
+It works because Let’s Encrypt doesn’t know or care that you’ve changed the acme.sh script to renew your certifications earlier than 80 days. By forcing a renewal date to 65 days, you cut into Let’s Encrypt’s three notifications periods by 15 days; effectively bumping the first two out and creating a new first one at day 5.
+
+**Note to CSF admins:** Certificates for CSF’s websites are currently set to expire after a provacative 69 days from renewal, which makes the first renewal notification arrive 9 days in advance.
 
 ## Keep your script updated!
 
