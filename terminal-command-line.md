@@ -2,7 +2,7 @@
 
 Terminal is Apple’s command-line client. You can find it via Finder in **Applications** > **Utilities**. Drag the icon to your apps bar so it’s handy in the future.
 
-Terminal can do a lot, most of which is out of scope here. But if there’s one thing to emphasize to someone first trying/learning the command-line, it’s this: Everything centers around working with folders and files on your machine. In turn, this means you need to know how to navigate to those places or execute commands on them, sometimes from a remote location — whether a parent directory, another connected drive, or a web server on the other side of the world. 
+Terminal can do a lot, the vast majority of which is out of scope here. But if there’s one thing to emphasize to someone first trying/learning the command-line, it’s this: Everything centers around working with folders and files; primarily on your own machine, but potentially other locations too (e.g. an external drive, another computer in your house, or a remote web server on the other side of the world). In turn, this means you need to know how to navigate to those places or execute commands on them. 
 
 In that light, this document focuses on the working context of using the command-line. We’ll demonstrate the concept of context by using two common commands: `ls` and `cd`, and you’ll be on your own from there. Once you’re familiar with command-line anatomy and context, there’s no holding you back.
 
