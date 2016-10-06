@@ -1,6 +1,8 @@
 # Setting up an AMP stack on a Macintosh computer
 
-_These running instructions describe setting up an AMP development environment (a.k.a. AMP stack) on a Macintosh computer. **AMP** stands for **Apache** (the web server), **MySQL** (the database server), and **PHP** (the scripting language). These instructions are written for those who’ve never used their built-in web server before and may not be experts on the command-line. There is a deliberate effort to teach here, not just list cryptic commands for you to robotically check off. These instructions will be maintained to the latest macOS version, currently Sierra versioin 10.12._
+_We describe setting up a web development environment on a Macintosh computer. The primary software involved includes an **Apache** web server, a **MySQL** database server, and **PHP** as the associated scripting language. Such an arrangement is often called an **AMP** stack. Even if you only ever use the web server, you’ll still have all three components configured and available. We also cover how to upgrade components, when necessary, and demonstrate the basics of setting up a website with a content management system, putting all three components to work. 
+
+These instructions are written for Mac owners who do not identify as “developers”, have never used the built-in web server before, and may not be experts on the command-line. These instructions are written with a deliberate effort to teach, not just get through it as fast as possible. These instructions will be maintained to the latest macOS version, currently Sierra versioin 10.12._
 
 ***      
 
