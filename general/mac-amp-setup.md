@@ -1,8 +1,8 @@
 # Setting up an AMP stack on a Macintosh computer
 
-_We describe setting up a web development environment on a Macintosh computer. The primary software involved includes an **Apache** web server, a **MySQL** database server, and **PHP** as the associated scripting language. Such an arrangement is often called an **AMP** stack. Even if you only ever use the web server, you’ll still have all three components configured and available. We also cover how to upgrade components, when necessary, and demonstrate the basics of setting up a website with a content management system, putting all three components to work. 
+_We describe setting up a web development environment on a Macintosh computer. The primary software involved includes an **Apache** web server, a **MySQL** database server, and **PHP** as the associated scripting language. Such an arrangement is often called an **AMP** stack. Even if you only ever use the web server, you’ll still have all three components configured and available. We also cover how to upgrade components, when necessary, and demonstrate the basics of setting up a website with a content management system, putting all three components to work._ 
 
-These instructions are written for Mac owners who do not identify as “developers”, have never used the built-in web server before, and may not be experts on the command-line. These instructions are written with a deliberate effort to teach, not just get through it as fast as possible. These instructions will be maintained to the latest macOS version, currently Sierra versioin 10.12._
+_These instructions are written for Mac owners who do not identify as “developers”, have never used the built-in web server before, and may not be experts on the command-line. These instructions are written with a deliberate effort to teach, not just get through it as fast as possible. These instructions will be maintained to the latest macOS version, currently Sierra versioin 10.12._ These instructions were written by [Destry Wion](https://github.com/wion), who welcomes all feedback about their usefulness, clarity, and accuracy._
 
 ***      
 
