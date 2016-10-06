@@ -547,72 +547,37 @@ Likewise, you can stop the Apache server with this command, though there’s no 
 sudo apachectl stop
 ```
 
-Congratulations! You have set up your Apache web server, theoretically speaking. Let’s quickly check to make sure it’s more than just theory. Go to the following link in your web browser, replacing “username” with your actual username:
+***
+
+Theoretically speaking, you have now set up your Apache web server. Quickly check to make sure it’s more than just theory by going to the following link in your web browser (replacing “username” with your actual username):
 
 http://localhost/~username/
 
+You should see the default _index.html_ file in your new DocumentRoot location (i.e. _~/Sites_) where a proper congratulations awaits you for attaining this milestone.
 
+But don’t linger, because there a few more things to do yet.
 
-### C.7) Server configuration test
+### C.7) Apache configuration test
 
-It doesn’t hurt to do a configuration test to see if any issues are hanging around. First, run this command to output a report:
+If you’re web server is working, by evidence of the default file check you just did, then you don’t have to worry about a configuration test too much. But it’s useful for finding any configuration discrepencies, whether critical or not.
 
-```
-apachectl configtest
-```
-
-If you don’t have any problems, all you should get back is `Syntax OK` and you’re done.
-
-I have no clue how many possible problems there could be, but I did run into a couple before, so I’ll walk through the one’s I’ve encountered…
+First, run this command to output a report:
 
 ```
 apachectl configtest
-AH00112: Warning: DocumentRoot [/usr/docs/dummy-host.example.com] does not exist
-AH00557: httpd: apr_sockaddr_info_get() failed for MyMachine.local
-AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1. Set the 'ServerName' directive globally to suppress this message
-Syntax OK
 ```
 
-The first flag, `AH00112`, is angry because of the “dummy” domain name it found. The location in question is the default virtual host container (the template) in the _httpd-vhost.conf_ file. I fixed this by commenting out all the lines for the template container.
+If you don’t have any problems, all you should get back is `Syntax OK` and you’re done with the test — and officially done with configuring Apache. /Applause!/
 
-The second flag, `AH00557`, I didn’t understand. But by fixing the third flag, the secong flag error went away too, so they must have been related.
+Hopefully this will be your situation, because by setting the `ServerAdmin` and `ServerName` values in the main _httpd.conf_ file, adding the `ErroLog` and `CustomLog` paths in the _httpd-vhosts.conf_ file, and commenting out the VirtualHost template block in the same file, you will avoid seeing some common config test errors that people often miss when setting up their AMP environments. 
 
-The third flag, `AH00558`, is angry because there’s no ‘ServerName’ set in the _httpd.conf_ file. For us individual machine users doing nothing but local development, this just needs to be your Mac’s IP address. So find your IP, uncomment line 204 in the config file, and replace the demo domain with your IP address.
+I have no clue how many possible problems could be reported in a server configuration test (I suspect it could be a lot), but I did run into a few in the past, which I’ve accounted for in these instructions, as mentioned. You should not see those. 
 
-To find your machine’s IP, run the following command: 
+Based on my experience, I can at least say the errors are generally helpful in figuring out where problems lie. It’s also the case that by fixing one problem you potentially eliminate multiple errors, depending on the nature of the problem, so if you can’t figure out one error, skip to the next and so on before killing yourself over a given one.
 
-```
-ifconfig |grep inet
-```
+And keep in mind that we’re talking about your local web server here that only you have access to. You’re not administering the corporate network, or using your machine to host websites online. So if your test _index.html_ file renders okay but you still see some enigmatic error in your config test report, it’s probably nothing to lose sleep over.    
 
-That output will look something like this:
-
-```
-	inet 127.0.0.1 netmask 0xff000000 
-	inet6 ::1 prefixlen 128 
-	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1 
-	inet6 fe80::10d3:e27d:eed5:d9df%en1 prefixlen 64 secured scopeid 0x7 
-	inet 192.169.0.75 netmask 0xffffff00 broadcast 192.169.0.266
-	inet6 fe80::b44b:9c12:aa8c:bd6c%utun0 prefixlen 64 scopeid 0xa
-```
-
-Your Mac IP will be the numbers in the second-to-last line immediately after `inet`. In this example they’re 192.169.0.75. (The IP is _not_ your localhost address — 127.0.0.1.)
-
-Remember that if you make changes to any Apache configuration file, you must restart the server as described in the previous section.
-
-### C.7) Backup configuration files
-
-Save and close the file.
-
-Anytime you edit an Apache server file, you need to reboot Apache server. 
-
-To restart the server (most cases), use…
-
-```
-sudo apachectl restart
-```
-
-**Note**: When you update Mac OS, this file is often replaced with a new one, and you have to run through and uncomment the lines above again, then reboot the Apache server, as described in Step 4.
+Remember that if you make changes to any Apache configuration files, you must restart the server as described in the previous section.
 
 ## D) Mac _hosts_ file
 
@@ -708,98 +673,34 @@ date.timezone = Europe/Paris
 
 ## F) Installing and updating MySQL
 
-(See mysql doc.)
+(Forthcoming.)
 
 I’m a little sad about that decision, though, because I’m what you might call a puritan when it comes to software on my machine. Regardless of whether I have lots of space or not, I don’t like installing more applications than are necessary. There are exceptions, but I generally try to keep things “lightweight”. In this case, if Apple wants to give me a perfectly good database to use, I might use it and save myself the headache of installing something different. But the logic isn’t always that easy.
 
-## G) Local website demonstration
+## G) Configuration backup files
 
-At this point your local AMP stack is all setup and functioning. Bravo! Now let’s walk through the process of setting up a local website that makes use of everything — a website powered by an open source CMS. No design, just an out-of-the-box installation you can successfully log into.
+Odds are good that every time you upgrade your Mac's operating system to a new major release, your web environment will be thrown out of whack and not work. This happens because Apple upgrades the built-in software, which in turn overwrites the configuration files you modified with new built-in defaults. Generally this doesn’t effect any files you created, only the files you modified.  
 
-For this demostration, we’ll say you’ve already bought **groov.io** for your production domain, and Textpattern is your CMS of choice. With your local AMP stack all set up, your process will then be…
+This will not effect your MySQL database because Apple doesn’t provide one. Nor will it effect any version of PHP that you’ve installed to the side of Apple’s own built-in version, as talked about earlier. You should backup any PHP version when using Mac’s built-in binaries, however.
 
-**Step 1:** Rename your placeholder subdirectory, _domain1_, to _groov_:
+Although these instructions will be available to walk through configurations manually again, if needed, you can save some time by making backups of the configuration files, then revert to those files again after the macOS upgrade. The convention for backing up configuration files is to duplicate them in the same directory they belong, but with an arbitrary _.backup_ extension tacked on. The ‘copy file’ (`cp`) utility can do this easily. 
 
-```
-mv ~/Sites/domain1 ~/Sites/groov
-```
+In the next sections are the configuration files you should backup. In each case, the list items are individual commands to run. Copy/paste the commands into the command-line one at a time and run them in series.
 
-**Step 2:** Open the _httpd-vhosts.conf_ file:
+**Apache backup files:**
 
-```
-mate 
+Note you need to change `<userame>` to your actual username in the fourth item.
 
+1. `cp /etc/apache2/httpd.conf /etc/apache2/httpd.conf.backup`
+2. `cp /private/etc/apache2/extra/httpd-userdir.conf /private/etc/apache2/extra/httpd-userdir.conf.backup`
+3. `cp /private/etc/apache2/extra/httpd-vhosts.conf /private/etc/apache2/extra/httpd-vhosts.conf.backup`
+4. `cp /etc/apache2/users/<username>.conf /etc/apache2/users/<username>.conf.backup`
 
-## H) Updating Apache
+**PHP backup files:**
 
-## I) Updating PHP
-
-## J) Tips and reference
-
-A summation of useful tips and reference.
-
-### Reboot Apache server
-
-Anytime you edit an Apache server file, you need to reboot Apache server. 
-
-To restart the server (most cases), use…
-
-	sudo apachectl restart
-	Password: (your MacWion pword)
-
-To stop Apache for any reason...
-
-	sudo apachectl stop
-
-To start Apache, again:
-
-	sudo apachectl start
-
-### Sites/ Folder
-
-We want all web projects to be established from your machine's ''Sites'' directory for quick access, which has it's own IP and under your user account: http://192.168.0.10/~destry/
-
-     ~destry/Sites/
-          wion.dev
-          csf.dev
-          etc.
+(Forthcoming.)
 
 
-### Chmod
+## H) Local website demonstration
 
-Run this to see what permissions are currently set on all folders and files in location:
-
-```
-ls -l /users/destry/Sites
-```
-
-When a line begins with “d”, it means permissions are on a directory. When line begins with “-“, it means on a file. For example:
-
-```
-drwxrwxr-x (means permissions 755 on a directory)
--rw-r--r--@ (means permissions 644 on a file)
-```
-
-The first triple is user (u)
-The second triple is group (g)
-The third triple is others (o)
-
-So 775 = u+g+o = (rwx)(rwx)(r-x) and used as rwxrwxr-x
-
-Here are some equivalents:
-
-rwxrwxr-x = 775 (= 0775) <— Considered secure
-rwxr-xr-x = 755 (= 0755)
-
-The letter and number match like this:
-
-4 stands for "read" (r)
-2 stands for "write" (w)
-1 stands for "execute" (x)
-0 stands for "no permission" (-)
-
-To change permissions on a single folder/file, run:
-
-```
-chmod NNN /path/to/target
-```
+(Forthcoming.)
