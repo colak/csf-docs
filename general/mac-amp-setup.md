@@ -9,7 +9,7 @@ Written and edited by [Destry Wion](https://github.com/wion).
 Maintained to the latest macOS version.
 
 | Published sections | OS version | Date of action |
-|:-|:-|:-|
+|:---|:---|:---|
 | First draft of Apache sections. | Sierra, 10.12 | 7 Oct 2016 |
 
 General feedback is welcome about the usefulness, clarity, and accuracy of these instructions. 
@@ -24,11 +24,11 @@ Contents:
 
 ***
 
-## A) Introduction
+## 1) Introduction
 
 These instructions are written for Mac owners who do not identify as “developers”, have never used the built-in web server before, and maybe don’t know what the Terminal.app is. The instructions are written with a deliberate effort to teach rather than rush you through enigmatic commands.
 
-### A.1) Why might you care
+### 1.1) Why might you care
 
 You might set up a working web server on your macOS for a number of reasons, such as to:
 
@@ -48,7 +48,7 @@ By doing all of those things, I:
 * stay familiar with conventional tools and techniques used in distributed collaboration situations, and
 * can talk about it all better in context when working with others.
 
-### A.2) What you will need and touch
+### 1.2) What you will need and touch
 
 Your Mac computer provides everything you need to establish a web development environment: 
 
@@ -64,7 +64,7 @@ I also touch on upgrading components when it’s _necessary_, and in this case I
 
 Of course, I’ll be using Terminal.app (the command-line client) along with my text editor of choice, TextMate. You can use whatever text editor you want, but you will need to use the command-line to follow these instructions. All commands are cut-’n’-paste with some explanation, no typing necessary. I’ll also be using [Homebrew](http://brew.sh/)’s utilities, so you’ll need `brew` installed too, and we’ll come back to doing that when it’s time.
 
-### A.3) You’re on your own, for the most part
+### 1.3) You’re on your own, for the most part
 
 A major reason for writing these instructions, admittedly, is so that I stay sharp on the process myself and have good instructions to refer to each time. But I wouldn’t write them so elaborately and make them public if I didn’t want others to succeed as well. I wish there had been instructions like these 12 years ago when I bought my first Macbook Pro. 
 
@@ -74,7 +74,7 @@ Start from the beginning and work through each section in order. If you run into
 
 Let’s get started.
 
-## B) Apache (the built-in web server)
+## 2) Apache (the built-in web server)
 
 You’ll set up and configure the built-in Apache web server and PHP before installing MySQL. You’ll begin by:
 
@@ -82,13 +82,13 @@ You’ll set up and configure the built-in Apache web server and PHP before inst
 2. configuring Apache, and
 3. adding placeholder web project domains.
 
-### B.1) DocumentRoot (web root directory)
+### 2.1) DocumentRoot (web root directory)
 
 A ‘DocumentRoot’ is a place in your macOS filesystem where web documents are rendered dynamically by the Apache web server. If web documents are not in a web root directory, or in designated subdirectories (i.e. web domains, or ‘VirtualHost’ domains) then Apache won’t recognize them.
 
 Over the history of Mac OS X (prior to macOS Sierra), there have been two DocumentRoot locations: system level and user level. 
 
-### B.1.1) System-level vs. user-level
+### 2.1.1) System-level vs. user-level
 
 In macOS Sierra, the system DocumentRoot is the supported default, located at _/Library/Webserver/Documents_. The leading foreslash indicates the path is relative to your hard-drive’s root (disk root). The fact it’s a “system” location means people sharing the computer, if that were the case, could all access and administer content there. From a web browser’s context, this location is represented as **http://localhost/**.
 
@@ -96,7 +96,7 @@ However, most Mac owners who do not need to share their computer prefer  using a
 
 The _Sites_ location used to be the default DocumentRoot in OS X up to Lion, then Apple moved away from it in later OS releases and stopped providing the _Sites_ directory. By that point, however, most of us Mac owners had become so used to the user location that we continue to use it, overriding Apple’s default configuration after each new OS upgrade. It has become somewhat a convention, and this is what I describe in these instructions.
 
-### B.1.2) Creating new web root and project directories 
+### 2.1.2) Creating new web root and project directories 
 
 You’ll start by creating the web root directory (_Sites_) and a couple of placeholder project directories inside it (_domain1_ and _domain2_). You’ll then put a test web document (_phpinfo.php_) inside both levels of the folder tree for use later when testing the server. In other words, you’re going to create this file tree structure:
 
@@ -153,7 +153,7 @@ Finally, run the following command to copy the _phpinfo.php_ file to the _domain
 cp ~/Sites/phpinfo.php ~/Sites/domain1
 ```
 
-### B.2) Apache configuration: _<username>.conf_
+### 2.2) Apache configuration: _<username>.conf_
 
 To make Apache understand that your new DocumentRoot is at the user level in the _Sites_ directory, you need to create a user configuration file (_<username>.conf_) that contains the necessary directory mapping. 
 
@@ -201,7 +201,7 @@ ls /etc/apache2/users
 
 Onward to main Apache file configurations…
 
-### B.3) Apache configuration: _httpd.conf_
+### 2.3) Apache configuration: _httpd.conf_
 
 You’re now going to make a series of edits to the main Apache configuration file, _httpd.conf_. In total, you will:
 
@@ -269,7 +269,7 @@ Most lines in the file are just text notes that should never be uncommented beca
 
 **Tip:** The note lines are the bulk of the configuration file, thus quite a lot to scroll through. They’re included as a kind of quick help for understanding the configuration settings, but not as a subtitute for the [official Apache docs](http://httpd.apache.org/docs/2.4/). Removing the note lines won’t hurt anything, but it’s worth pointing out that instructions like what you’re reading now often use line numbers to help you pinpoint configuration settings quicker. If you remove all the note bloat, the line numbers would be meaningless and confusing. On the other hand, the file would be much easier to scan, thus mentioning line numbers might not be necessary. In my opinion, all the note comments are an eyesore and subject for removal (and I remove them in my own files), while remaining header notes can be edited more concisely. But that’s out of scope here, and I do reference line numbers to help you.
 
-#### B.3.1) Activate DSO modules
+#### 2.3.1) Activate DSO modules
 
 Beginning around line 55 is where the list of Dynamic Shared Object (DSO) modules begins. Most of the modules will be commented out by default, while others will be active. You won’t turn any off, but you do need to ensure a few more are turned on by removing the `#` in front of them.
 
@@ -283,7 +283,7 @@ Make sure the following module are active. The line numbers should be correct, b
 
 Continue…
 
-#### B.3.2) Set ‘ServerAdmin’
+#### 2.3.2) Set ‘ServerAdmin’
 
 Around line 204 is the ‘ServerAdmin’ setting. Change the dummy email to a working email address that you receive email at, for example.
 
@@ -293,7 +293,7 @@ ServerAdmin you@gmail.com
 
 Continue…
 
-#### B.3.3) Set the Apache ‘ServerName’
+#### 2.3.3) Set the Apache ‘ServerName’
 
 Around line 213 is the ‘ServerName’ setting. For individual Mac users like us, who are not running any networks, or whatever, this just needs to be your Mac’s IP address. 
 
@@ -324,7 +324,7 @@ ServerName xxx.xxx.x.xx
  
 Continue…
 
-#### B.3.4) Change ‘DocumentRoot’ path
+#### 2.3.4) Change ‘DocumentRoot’ path
 
 In section C.1 you created a new web root directory at _~/Sites_ (i.e. _/Users/<username>/Sites_). Now you’re going to set the configuration paths that tell Apache to use that location. 
 
@@ -344,7 +344,7 @@ DocumentRoot "/Users/<username>/Sites_"
 
 Continue…
 
-#### B.3.5) Include needed configuration files
+#### 2.3.5) Include needed configuration files
 
 In addition to the main configuration file that you’re editing, Apache will need two other configuration files for our intended purposes: _httpd-userdir.conf_ and _httpd-vhosts.conf_. The files already exist, you just need to uncomment the following lines:
  
@@ -355,7 +355,7 @@ The two files work in relation to the DSO modules on lines 160 and 166 that you 
 
 You’re now done editing the main configuration file (_httpd.conf_). Hit Cmd+S to save your changes and close the file.
 
-### B.4) Apache configuration: _httpd-userdir.conf_
+### 2.4) Apache configuration: _httpd-userdir.conf_
 
 The _httpd-userdir.conf_ configuration file is required to force Apache to recognize the _Sites_ directory as the new user level DocumentRoot we desire for default. 
 
@@ -382,7 +382,7 @@ Include /private/etc/apache2/users/*.conf
 
 Hit Cmd+S to save your changes, if necessary, and close the file.
 
-### B.5) Apache configuration: _httpd-vhosts.conf_
+### 2.5) Apache configuration: _httpd-vhosts.conf_
 
 The _httpd-vhosts.conf_ configuration file is needed to define the ‘VirtualHost’ containers that will make the placeholder subdirectories in the user-level DocumentRoot function like individual web domains (unique websites).
 
@@ -450,7 +450,7 @@ The two VirtualHost blocks are commented out until you’re ready to use them. S
 
 `ErroLog` and `CustomLog` are nothing to worry about. We set them only to keep Apache from complaining when running a configuration test. They can be useful for advanced users to troubleshoot server issues by lookig at logged events. But unless you know why you would look there, just ignore them.
 
-### B.6) Restart Apache
+### 2.6) Restart Apache
 
 Whenever you edit an Apache configuration file — no matter which one — you need to restart the Apache server for the changes to take affect. Up to this point you’ve worked with four configuration files and made a lot of changes; it’s time to reboot Apache.
 
@@ -484,7 +484,7 @@ You should see the default _index.html_ file in your new DocumentRoot location (
 
 But don’t linger, because there a few more things to do yet.
 
-### B.7) Apache configuration test
+### 2.7) Apache configuration test
 
 If you’re web server is working, by evidence of the default file check you just did, then you don’t have to worry about a configuration test too much. But it’s useful for finding any configuration discrepencies, whether critical or not.
 
@@ -506,7 +506,7 @@ And keep in mind that we’re talking about your local web server here that only
 
 Remember that if you make changes to any Apache configuration files, you must restart the server as described in the previous section.
 
-## C) Mac _hosts_ file
+## 3) Mac _hosts_ file
 
 The _hosts_ file has nothing to do with AMP software components; it’s an important file in your Mac’s filesystem. It must be used in combination with Apache if you plan to run VirtualHost directories, which is the assumption in these instructions, even if you never do. For each virtual directory you setup in the _httpd-vhosts.conf_ configuration file, you need to add the corresponding server name in the _hosts_ file too.
 
@@ -550,7 +550,7 @@ You’ve simply added a few lines representing your virtual project domains. Rem
 
 Note that all of the lines except for _domain1.dev_ are commented out. The first two lines should _always_ be commented out; they’re just serving as a section header in the file. But you would need to uncomment your domain lines when ready to use them. I’ve left the _domain1.dev_ line active so you can test the web domain after configuring PHP, which you will do in the next section.
 
-Finally, whenever you edit the _hosts_ file, you must flush the cache afterward. Do this now by running the following command: 
+Finally, whenever you edit the _hosts_ file, you must flush the Directory Service cache afterward. Do this now by running the following command: 
 
 ```
 dscacheutil -flushcache
@@ -558,11 +558,11 @@ dscacheutil -flushcache
 
 Good job! Let’s dive into PHP.
 
-## D) PHP setup
+## 4) PHP setup
 
 
 
-### D.1) upgrades and switching
+### 4.1) upgrades and switching
 
 MacOS Sierra ships with PHP 5.6.3. Regardless, you can check what version you have by running the following command: 
 
@@ -644,13 +644,13 @@ Uncomment and change it to:
 date.timezone = Europe/Paris
 ```
 
-## E) Installing and updating MySQL
+## 5) Installing and updating MySQL
 
 (Forthcoming.)
 
 I’m a little sad about that decision, though, because I’m what you might call a puritan when it comes to software on my machine. Regardless of whether I have lots of space or not, I don’t like installing more applications than are necessary. There are exceptions, but I generally try to keep things “lightweight”. In this case, if Apple wants to give me a perfectly good database to use, I might use it and save myself the headache of installing something different. But the logic isn’t always that easy.
 
-## F) Configuration backup files
+## 6) Configuration backup files
 
 Odds are good that every time you upgrade your Mac's operating system to a new major release, your web environment will be thrown out of whack and not work. This happens because Apple upgrades the built-in software, which in turn overwrites the configuration files you modified with new built-in defaults. Generally this doesn’t effect any files you created, only the files you modified.  
 
@@ -674,11 +674,9 @@ Note you need to change `<userame>` to your actual username in the fourth item.
 (Forthcoming.)
 
 
-## G) Local website demonstration
+## 7) Local website demonstration
 
 (Forthcoming.)
-
-***
 
 # Appendix
 
@@ -686,31 +684,34 @@ Useful references.
 
 ## A) Find versions of stack components
 
-Knowing what versions of software you have installed can be very useful when making decisions about software compatibility and when to upgrade components. Versions for the built-in APP components will depend on which version of macOS you have and what the last Apple update may have provided. 
+Knowing what versions of software you have installed can be useful when making decisions about software compatibility and when to upgrade components. Versions for the built-in APP components will depend on which version of macOS you have and what the last Apple update may have provided. 
 
-A default install of macOS Sierra would provide: 
+A default install of macOS Sierra 10.12 would provide: 
 
-* Apache 2.4 
-* PHP 5.6
+* Apache 2.4.23 
+* PHP 5.6.3
 * PostgreSQL 9.3.5
 
-But those versions could change over time and you might not keep  track of them, exactly. But you can easily find this information by running simple commands in Terminal.
+Those versions could change over time, however, and you might not keep track of them. You can easily find version information by running simple commands in Terminal.
 
 ### A.1) Apache version
 
-To verify your Apache version, run:
+To verify your Apache version, run either of the following commands, no need to run both:
 
 ```
 apachectl -v
 ```
 
-You’ll get output similar to this:  
+```
+httpd -v
+```
+
+Either way, you’ll get output showing the Apache version and when the server was built:  
 
 ```
 Server version: Apache/2.4.23 (Unix)
 Server built:   Aug  8 2016 16:31:34
 ```
-
 
 ### A.2) PHP version
 
@@ -720,17 +721,13 @@ To verify your PHP version, run:
 php -v
 ```
 
-You’ll get output similar to this:
+You’ll get output that begins with a line like this, which is the line you’re interested in, in fact:
 
 ```
 PHP 7.0.7 (cli) (built: May 26 2016 16:01:05) ( NTS )
-Copyright (c) 1997-2016 The PHP Group
-Zend Engine v3.0.0, Copyright (c) 1998-2016 Zend Technologies
-    with Zend OPcache v7.0.6-dev, Copyright (c) 1999-2016, by Zend Technologies
-    with Xdebug v2.4.0RC3, Copyright (c) 2002-2015, by Derick Rethans
 ```
 
-The output shown here is not reflecting the built-in PHP in Sierra, but rather a newer version installed to the side that Apache is using.
+The output shown here is not reflecting PHP 5.6.3 that’s built-in with Sierra, but rather a newer version installed to the side that Apache is using.
 
 ### A.3) PostgreSQL version
 
@@ -764,4 +761,4 @@ You’ll get output similar to this:
 mysql  Ver 14.14 Distrib 5.7.13, for osx10.11 (x86_64) using  EditLine wrapper
 ```
 
-The output is a little confusing. In this example, the version number is **5.7.13**, not 14.14 as it would seem to indicate. Also the indication of “for osx10.11” (i.e. El Capitan) is irrelevant even though were talking about Sierra 10.12. That simply reflects what version of OS was running when the database was installed (in this case via Homebrew). That information would change and reflect the new OS when the database was updated again.
+The output is a little confusing. In this example, the version number is **5.7.13**, not 14.14 as it would seem to indicate. Also the indication of “for osx10.11” (i.e. El Capitan) is irrelevant, even though were talking about Sierra 10.12. That simply reflects what version of OS was running when the database was installed (in this case via Homebrew). That information would change and reflect the new OS when the database was upgraded again.
