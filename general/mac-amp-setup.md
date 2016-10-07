@@ -1,8 +1,20 @@
-# Setting up an AMP stack on a Macintosh computer
+# Setting up Apache, MySQL, and PHP on a Macintosh computer
 
-_We describe setting up a web development environment on a Macintosh computer. The primary software involved includes an **Apache** web server, a **MySQL** database server, and **PHP** as the associated scripting language. Such an arrangement is often called an **AMP** stack. Even if you only ever use the web server, you’ll still have all three components configured and available. We also cover how to upgrade components, when necessary, and demonstrate the basics of setting up a website with a content management system, putting all three components to work._ 
+_These instructions describe setting up a web development environment on a Mac using built-in and third-party software. Notable components are an **Apache** web server, a **MySQL** database server, and **PHP** — collectively, an **AMP** stack. You won’t have to use the database — e.g. maybe you like flat-file websites — but it will be setup and configured anyway just in case. We also cover how to upgrade components, when necessary, and demonstrate the basics of setting up a website with a content management system, putting all three components to work._ 
 
-_These instructions are written for Mac owners who do not identify as “developers”, have never used the built-in web server before, and may not be experts on the command-line. These instructions are written with a deliberate effort to teach, not just get through it as fast as possible. These instructions will be maintained to the latest macOS version, currently Sierra versioin 10.12._ These instructions were written by [Destry Wion](https://github.com/wion), who welcomes all feedback about their usefulness, clarity, and accuracy._
+***
+
+Written and edited by [Destry Wion](https://github.com/wion). 
+
+Maintained to the latest macOS version.
+
+| Published sections | OS version | Date of action |
+|:-|:-|:-|
+| First draft of Apache sections. | Sierra, 10.12 | 7 Oct 2016 |
+
+General feedback is welcome about the usefulness, clarity, and accuracy of these instructions. 
+
+Additionally, I am looking for three testers that would try the instructions under a controlled process, working at your own pace, and having my direct support along the way. In this case, you must have never set up an AMP stack on your Mac before, tend to shy away from the command-line, and do not identify as a developer. The testing will follow an atononymous, systematic procedure that I’ll communicate to you after you volunteer and I’ve asked you some questions.
 
 ***      
 
@@ -12,7 +24,11 @@ Contents:
 
 ***
 
-## Introduction
+## A) Introduction
+
+These instructions are written for Mac owners who do not identify as “developers”, have never used the built-in web server before, and maybe don’t know what the Terminal.app is. The instructions are written with a deliberate effort to teach rather than rush you through enigmatic commands.
+
+### A.1) Why might you care
 
 You might set up a working web server on your macOS for a number of reasons, such as to:
 
@@ -23,14 +39,16 @@ You might set up a working web server on your macOS for a number of reasons, suc
 * collaborate with others as writer, designer, or developer on an open project via a repository hosting service (e.g. GitHub, BitBucket, Gitlab…), or
 * all the above — and more.
 
-You do not have to be a developer, or need to write lines of code, to do these kinds of things. I am _not_ a developer. I work with words and UI layout. Yet I do need to install and test different web software packages on occasion. I do need to maintain staging sites for a few important production websites, whether side projects, for clients, or my own. And I do collaborate with others via GitHub, maintaining repositories and writng documentation for open source web publishing systems. (You can’t write leading-edge documentation for products you can’t trial out of the box.) 
+Again, you do not have to be a developer, or need to write lines of code, to do these kinds of things. I am _not_ a developer. I work with words and UI layout. Yet I do need to install and test different web software packages on occasion. I do need to maintain staging sites for a few important production websites, whether side projects, for clients, or my own. And I do collaborate with others via GitHub, maintaining repositories and writng documentation for open source web publishing systems. You can’t write leading-edge documentation for products you can’t trial out of the box.
 
 By doing all of those things, I: 
 
-* remain competent writng HTML and CSS, 
-* get better using the command-line, 
-* stay familiar with conventional tools and techniques used in remote collaboration situations, and
+* remain competent with HTML and CSS, 
+* get better using the command-line and learnig my Mac’s filesystem, 
+* stay familiar with conventional tools and techniques used in distributed collaboration situations, and
 * can talk about it all better in context when working with others.
+
+### A.2) What you will need and touch
 
 Your Mac computer provides everything you need to establish a web development environment: 
 
@@ -38,33 +56,29 @@ Your Mac computer provides everything you need to establish a web development en
 * a PostgreSQL relational database, and 
 * PHP to support dynamic scripting.
 
-Making it all work requires nothing but a few simple line edits in a couple of system files.
+Making it all work requires nothing but running copy/paste commands in Terminal and making a few file edits.
 
-However, notice those components don’t reflect an AMP stack, as mentioned at the beginning, rather they suggest an APP stack (an appropriate acronym, actually). That’s because I’m not going to use the built-in PostgreSQL database. I use a MySQL database instead. I’ll talk about this more in the database section, but it’s basically a “best fit” decision. 
+We won’t be using the built-in PostgreSQL database, however. That would suggest an “APP” stack (an appropriate acronym, actually). I describe installing and using a MySQL database instead. I’ll address that choice more in the database section, but it’s basically a “best fit” decision (for the time being). 
 
-I also touch on upgrading components when it’s _necessary_, and in this case I’ll elaborate on upgrading your PHP. By relying on Mac’s built-in components, whenever possible, we pass some of the responsibility to Apple to help us keep our components functional. This is a nice situation to leverage over time if, like me, you don’t live to run the latest and greatest versions of software. Generally speaking, if the old dog is healthy, we don’t replace it. Only when it’s a matter of functional compatability with related applications or system security do we bother pushing up the timeline.
+I also touch on upgrading components when it’s _necessary_, and in this case I’ll elaborate on upgrading your PHP. By relying on Mac’s built-in components, whenever possible, we pass some of the responsibility to Apple to help us keep our components functional. Leveraging the built-in components is useful if, like me, you don’t live on the edge of your seat to upgrade software the moment a new version is released. We just want to write and edit, after all, not innovate the internet. Generally speaking, if the old dog is healthy, I don’t replace it. It’s only necessary to upgrade a given stack component when it’s a question of system security or said component stops being functionally compatable with related applications you rely on.
 
-I’ll be using Terminal.app (the command-line client) along with my text editor of choice, TextMate. You can use whatever text editor you want, but you will need to use the command-line to follow these instructions. All commands are cut-’n’-paste with some explanation, no typing necessary. I’ll also be using [Homebrew](http://brew.sh/)’s utilities, so you’ll need `brew` installed too (we’ll come back to that).
+Of course, I’ll be using Terminal.app (the command-line client) along with my text editor of choice, TextMate. You can use whatever text editor you want, but you will need to use the command-line to follow these instructions. All commands are cut-’n’-paste with some explanation, no typing necessary. I’ll also be using [Homebrew](http://brew.sh/)’s utilities, so you’ll need `brew` installed too, and we’ll come back to doing that when it’s time.
 
-I provide no support for using these instructions. If you decide to use them, you’re on your own. But if you follow the instructions as described, and your filesystem hasn’t been altered in any way that would make the instructions obsolete, you should succeed. I recommend you start from the beginning and work through each section to the letter. I will maintain these instructions as new versions of macOS are released, so they will not be outdated. If you run into trouble, there are many communities to get help. [StackOverlow](http://stackoverflow.com/) is one that comes to mind.
+### A.3) You’re on your own, for the most part
 
-## A) Perspective
+A major reason for writing these instructions, admittedly, is so that I stay sharp on the process myself and have good instructions to refer to each time. But I wouldn’t write them so elaborately and make them public if I didn’t want others to succeed as well. I wish there had been instructions like these 12 years ago when I bought my first Macbook Pro. 
 
-Be aware that Apple isn’t aggressive about keeping the native install of Apache and PHP current. Sometimes a couple of OS versions are released without any change. And though you don’t always need the latest releases of software to be functional, it’s sometimes necessary to upgrade them independently in order to keep your web applications compatible with production environments (i.e. your web host), or with the requirements of other web applications you might install (e.g. CMSes).
+That said, I am a busy person like anyone else. I’ve chosen to invest my effort in maintaining the documentation based on feedback and user testing instead of providing one-on-one support to unlimited numbers of people who might have questions at every step. If you decide to follow these instructions, you’re on your own, just as I was 12 years ago. But if you follow the instructions to the letter, and your filesystem hasn’t been altered in any way that would make the instructions obsolete, you will succeed! 
 
-The trick, then, when making such updates, is to install new components outside of Apple’s native binaries so they are easily removed again when Apple’s versions are upgraded in a future OS release. Fortunately, you don’t have to worry about this too much with Apache; Apple seems to update this frequently enough (albeit on it’s own schedule) that it’s not an issue. 
+Start from the beginning and work through each section in order. If you run into trouble, there are many knowledge bases to seek solutions from. [StackOverlow](http://stackoverflow.com/) is one that has helped me tremendously over the years.
 
-Likewise, MySQL isn’t natively installed on macOS, so there’s no risk of you or Apple overwriting each other’s installations. You simply upgrade your own install of MySQL when needed. The one exception is if/when you decide to do a fresh install of the macOS iteslef (as opposed to just updating it), in which case you’d need to reinstall MySQL again. We’ll be talking about backups too.
+Let’s get started.
 
-PHP is the exception to be mindful of, as noted in my situation. Issues related with outdated versions of PHP seem to crop up more regularly than with Apache (or MySQL). You may have to update PHP more frequently due to Apple’s lackadaisical timeline. When you upgrade PHP, install newer versions “to the side” of Apple’s native binaries and correct paths in the Apache config file as necessary. Later, when Apple updates its own installed version, you can revert the paths back to Apple’s native install locations and remove the obsolete PHP package.
+## B) Verifying versions of stack components
 
-## B) Verifying versions of _active_ components
+It’s useful to know how to check what versions of software you have installed. This section explains how to do that for Apache, PHP, PostgreSQL (even though we won’t use it), and MySQL (even though it’s not built-in, we’ll add it later).
 
-It’s useful to know how to check what versions of software you have running. This section explains how to do that for Apache, PHP, PostgreSQL (even though we won’t use it), and MySQL (even though it’s not built-in, we’ll add it later).
-
-By default, the built-in components will be evaluated first. But any updates or upgrades will be read instead if they are installed and configured as the active (working) versions.
-
-Versions for the three built-in APP components will depend on which version of macOS you have and what the last Apple update may have provided. A default install of macOS Sierra would provide: 
+Versions for the built-in APP components will depend on which version of macOS you have and what the last Apple update may have provided. A default install of macOS Sierra would provide: 
 
 * Apache 2.4 
 * PHP 5.6
@@ -149,7 +163,7 @@ The output is a little confusing, because the version number is actually **5.7.1
 
 When I get around to upgrading MySQL again, that information will change to reflect the new OS, but in the meantime it’s not hurting anything. What’s important is that I’m running a a version of MySQL that’s compatible to my needs, and 5.7.13 is a rather recent version I can use for a while.
 
-## C) Set up web server
+## C) Apache (the built-in web server)
 
 You’ll set up and configure the built-in Apache web server and PHP before installing MySQL. You’ll begin by:
 
@@ -171,7 +185,7 @@ However, most Mac owners who do not need to share their computer prefer  using a
 
 The _Sites_ location used to be the default DocumentRoot in OS X up to Lion, then Apple moved away from it in later OS releases and stopped providing the _Sites_ directory. By that point, however, most of us Mac owners had become so used to the user location that we continue to use it, overriding Apple’s default configuration after each new OS upgrade. It has become somewhat a convention, and this is what I describe in these instructions.
 
-### C.1.2) Creating new web root and virtual directories 
+### C.1.2) Creating new web root and project directories 
 
 You’ll start by creating the web root directory (_Sites_) and a couple of placeholder project directories inside it (_domain1_ and _domain2_). You’ll then put a test web document (_phpinfo.php_) inside both levels of the folder tree for use later when testing the server. In other words, you’re going to create this file tree structure:
 
@@ -208,7 +222,7 @@ mkdir ~/Sites/domain1
 mkdir ~/Sites/domain2
 ```
 
-Finally, for the purpose of testing our locations later, you’ll add a test php file in the DocumentRoot and copy it to one of the subdirectories. First run the following command:
+For the purpose of testing our locations later, you’ll add a test PHP file in the DocumentRoot and copy it to one of the subdirectories. First run the following command:
 
 ```
 nano ~/Sites/phpinfo.php
@@ -222,7 +236,7 @@ The Nano editor will appear in the console. Copy (Cmd+C) the following line and 
 
 Then hit **Ctrl+X** keys to exit Nano editing mode, then hit **Y** key when asked to save file changes, then hit **Return** key to return to the command-line.
 
-Finally, copy the php file to the _domain1_ subdirectory by running the following:
+Finally, run the following command to copy the _phpinfo.php_ file to the _domain1_ subdirectory:
 
 ```
 cp ~/Sites/phpinfo.php ~/Sites/domain1
@@ -230,7 +244,7 @@ cp ~/Sites/phpinfo.php ~/Sites/domain1
 
 ### C.2) Apache configuration: _<username>.conf_
 
-To make Apache understand that your new DocumentRoot is at the user level, you need to create a user configuration file (_<username>.conf_) that contains the necessary directory mapping. For this you’re going to use the Nano editor again, because it’s easy-peasy. 
+To make Apache understand that your new DocumentRoot is at the user level in the _Sites_ directory, you need to create a user configuration file (_<username>.conf_) that contains the necessary directory mapping. 
 
 **Attention:** make sure to correct the `<username>` variable in all instances it appears.
 
@@ -583,15 +597,61 @@ Remember that if you make changes to any Apache configuration files, you must re
 
 ## D) Mac _hosts_ file
 
-In order to run virtual directories, you need to provide a server name in the Mac hosts file for each virtual site. Again, do this with TextMate via command-line. If the hosts file records already exist, skip this step.
+The _hosts_ file has nothing to do with AMP software components; it’s an important file in your Mac’s filesystem. It must be used in combination with Apache if you plan to run VirtualHost directories, which is the assumption in these instructions, even if you never do. For each virtual directory you setup in the _httpd-vhosts.conf_ configuration file, you need to add the corresponding server name in the _hosts_ file too.
 
-     mate /private/etc/hosts
+Open the hosts file in Nano. You’ll need to use `sudo` in the command, and you’ll be asked for your password becaue this is a system file:
 
-You then have to flush the cache using: 
+```
+sudo nano -e /private/etc/hosts
+```
 
-     dscacheutil -flushcache
+If you’ve never edited this file before, you should see something like this inside:
 
-## E) PHP upgrades and switching
+```
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1       dev
+127.0.0.1       localhost
+255.255.255.255 broadcasthost
+::1             localhost
+```
+
+Never edit any of those lines!
+
+Use the down-arrow key to move the Nano cursor to the bottom of the file on a new line. If you have to use the right-arrow key to move to the end of the last line first then, so bit. Just make sure you have a couple line breaks at the bottom of the file without altering the lines already in the file.
+
+Then copy (**Cmd+C**) and paste (**Cmd+V**) the following content into the bottom of file on the last line:
+
+```
+##
+# My projects
+127.0.0.1 domain1.dev
+#127.0.0.1 domain2.dev
+```
+
+Then, as usual when using Nano, hit **Ctrl+X** keys to exit Nano edit mode, click **Y** when asked to save changes, and hit **Enter** key to return to the command-line.
+
+You’ve simply added a few lines representing your virtual project domains. Remember that we set up two placeholder domains in the _httpd-vhosts.conf_ file and gave them the temporary server names _domain1.dev_ and _domain2.dev_. Those are the same server names that need used here.
+
+Note that all of the lines except for _domain1.dev_ are commented out. The first two lines should _always_ be commented out; they’re just serving as a section header in the file. But you would need to uncomment your domain lines when ready to use them. I’ve left the _domain1.dev_ line active so you can test the web domain after configuring PHP, which you will do in the next section.
+
+Finally, whenever you edit the _hosts_ file, you must flush the cache afterward. Do this now by running the following command: 
+
+```
+dscacheutil -flushcache
+```
+
+Good job! Let’s dive into PHP.
+
+## E) PHP setup
+
+
+
+### E.1) upgrades and switching
 
 MacOS Sierra ships with PHP 5.6.3. Regardless, you can check what version you have by running the following command: 
 
