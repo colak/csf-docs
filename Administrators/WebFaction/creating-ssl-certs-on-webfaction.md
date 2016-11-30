@@ -1,3 +1,5 @@
+{{TOC}}
+
 # Installing LetsEncrypt SSL Certificates on WebFaction
 
 [Let’s Encrypt](https://letsencrypt.org/) provides free Secure Socket Layer (SSL) certificates; those things that put the “s” in the “https://“ of your website URLs. Because they are free, there are some [rate limits](https://letsencrypt.org/docs/rate-limits/) to be aware of:
