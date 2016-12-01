@@ -146,7 +146,13 @@ You should achieve the same result as previously with the test, except now you h
 
 Before proceeding with installation, return to your **Websites** list in the WebFaction dashboard, and switch your site(s) back to your original application so that it's no longer serving the "letsencrypt_validation" custom app. This brings your site back online.
 
-## 7) Tell WebFaction to install your certificates
+## 7) Install certificates on WebFaction
+
+As of September 2016, you can now install certificates yourself in the WebFaction dashboard (whereas before you had to write a support ticket each time). See the [documentation for adding SSL certificates via the WebFaction dashboard](https://docs.webfaction.com/user-guide/websites.html#secure-sites-https).
+
+***
+
+Remove the following text when the new dashboard process has been tested and confirmed.
 
 Finally, create a [WebFaction Support Ticket](https://help.webfaction.com/) to have your SSL certificate installed. Use the following message in your ticket request:
 
@@ -159,7 +165,7 @@ Replace "domain.tld” with your actual domain, and "mysite_ssl" (if you named i
 
 ## 8) Certificate renewal dates and notifications
 
-Let’s Encrypt certificates expire after 80 days, and [renewal notices](https://letsencrypt.org/docs/expiration-emails/) are sent to you three different times in advance: 20 days, 10 days, and finally 1 day, or until you renew your certs, whichever comes first. That’s all at Let’s Encrypt’s end.
+Let’s Encrypt certificates expire after 80 days (90?), and [renewal notices](https://letsencrypt.org/docs/expiration-emails/) are sent to you three different times in advance: 20 days, 10 days, and finally 1 day, or until you renew your certs, whichever comes first. That’s all at Let’s Encrypt’s end.
 
 But maybe you think the first 20-day notice is a little much, and the 10- and 1-day notices are enough. Or maybe just a 5-day notice is all you need to spring into action. While you can’t actually tell Let’s Encrypt when to notify you, you can make your renewal time  earlier than 80 days (not longer, sorry) to influence the notification pattern. Do this by running the following command, where “DD” is the number of days less than 80 that you want to renew your certs:
 
