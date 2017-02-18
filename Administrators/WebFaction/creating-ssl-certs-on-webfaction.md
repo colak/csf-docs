@@ -18,27 +18,27 @@ Let’s Encrypt provides free Secure Socket Layer (SSL) certificates. Because th
 
 This means, even if you’re well under the first two limits, you have to be careful about the third rate limit, duplicate certs, because 5 is a low limit. You’re advised to use the staging (test) procedure when requesting or renewing certs, to make sure you don’t accidently use up your limit needlessly when walking through this process. The test procedure is covered in these instructions.
 
-## 1) To ‘www’ or not to ‘www’ (Class B redirection)
+## 1) CNAME records for Class B redirection on WebFaction
 
-This may not concern your situation, but just to cover bases… From the process of setting up SSL certificates for CSF, it was discovered that some of CSF’s domain configurations were amiss.
+If you like using “www” in URLs, then this may not concern you. But we don’t like using “www”. We prefer a Class B redirect. In other words, whether site visitors add “www” in the URL or not, they will always land at `https://domain.tld` (no www). 
 
-In our case, we don’t like using “www”. We prefer a Class B redirect. In other words, site visitors should land at _csf.community_, not _www.csf.community_, whether they added “www” or not in the URL. 
+To set up a Class B situation on WebFaction, you must have a CNAME record in the WebFaction dashboard, **in addition** to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize the CNAME requirement when initionally trying to run SSL certificates, and couldn’t proceed until the CNAME records were setup.
 
-To set up a Class B on WebFaction, you must have a CNAME record in the WebFaction dashboard, **in addition** to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection. We didn’t realize the CNAME requirement before, and couldn’t proceed with creating Let’s Encrypt certifications until the CNAME records were setup.
+How it works:
 
-At minimum, for every domain, we needed two website names, one for the target domain and one for the CNAME record. CSF’s, for example:
+For each domain on WebFaction that you want a Class B redirect for, you need two website names, one for the target domain and one for the CNAME record. For example, our CSF domain is setup like this:
 
 * **csf** = http://csf.community (target domain)
 * **csf_www** = http://www.csf.community (CNAME record)
 
-But to have SSL certificates on top of the Class B CNAME redirects, WebFaction requires _four_ website records — two for each domain type. We’ve created and named the records as:
+But to have SSL certificates on top of the Class B CNAME redirects, WebFaction requires _four_ website records — two for each domain type. We created and named the associated records for CSF as:
 
 * **csf** = [http://csf.community](http://csf.community) (Not secured)
 * **csf_ssl** = [https://csf.community](https://csf.community) (Secured, our final destination)
 * **csf_www** = [http://www.csf.community](http://www.csf.community) (CNAME record)
-* **csf_www_ssl** = [https://www.csf.community](https://www.csf.community) (CNAME record)
+* **csf_www_ssl** = [https://www.csf.community](https://www.csf.community) (CNAME record) 
 
-The associated mod_rewrite rules in your _.htaccess_ file should be:
+The associated mod_rewrite rules in your _.htaccess_ file should  then be:
 
 ```
 ## Class B (no www) redirects
@@ -50,25 +50,27 @@ RewriteCond %{HTTP:X-Forwarded-SSL} !on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 ```
 
-Now, no matter which one of the four URLs you click above, the destination should always end up being https://csf.community, as we desire for CSF. 
+Now, no matter which one of the four URLs you click above, the destination should always end up being `https://csf.community`, which is what we want for CSF. 
 
-If you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup in the WebFaction dashboard _before_ proceeding with Let’s Encrypt. 
+If you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup in the WebFaction dashboard _before_ proceeding with the rest of these instructions. 
 
-**WebFaction vocabulary:** In WebFaction parlance, a “domain” is what you would expect (e.g. _domain.tld_), and a “webapp” (or application) is any kind of software you have installed in your domain’s directory. In relation, a “website” is a name you give that domain record to conveniently reference it in the WebFaction dashboard. For example, the four bold names in the list above are website names, and _csf_ssl_ and _csf_www_ssl_ are the ones CSF needed to inform WebFaction about, as described in step #7.
+**Side on WebFaction semantics:** In WebFaction parlance, a “domain” means what you would expect (e.g. _domain.tld_), and a “webapp” (or application) is any kind of software you have installed in your domain’s directory (e.g. `~/webapps/domain/index.php`. In relation, a “website” is a name you give that domain record to conveniently reference it in the WebFaction dashboard, and a given domain can logically have up to 4 names to represent the different possible states of the domain. For example, the 4 bold names in the list above are “website” names associated to _csf.community_ domain, and _csf_ssl_ and _csf_www_ssl_ are the ones CSF needed to create the SSL certificates in section #7.
 
-## 2) Create a Let’s Encrypt webapp
+## 2) Create a Let’s Encrypt webapp for WebFaction use
 
-Now you’ll create a new WebFaction application that can be used for creating the certificates you need now and in the future. You do not need to create a separate app for each of your websites!
+Before you can initially create and bind certs to the “websites” of a given domain, you need to create a new WebFaction application for that purpose. You only do this once, then can reuse the app as many times as you need in the future for different domains.
 
-In the **Applications** panel, under **Domains / Websites** of the WebFaction dashboard, create a new application as:
+Process:
 
-* name: “letsencrypt_validation”
-* category: Custom
-* type: Custom app (listening on port)   
+In the WebFaction dashboard, go to **DOMAINS/WEBSITES** > **Applications**, and create a new application as:
+
+* **Name**: letsencrypt_validation
+* **Category**: Custom
+* **Type**: Custom app (listening on port)   
 
 Leave the **Open port** box unchecked.
 
-When created, click the app’s name in the app list to see its properties, and make note of the **Port** number. You’ll need it later in step 5.
+When created, click the app’s name in the app list to see its properties, and make note of the **Port** number. You’ll need it later in section #5.
 
 ## 3) Install acme.sh
 
