@@ -46,21 +46,27 @@ With respect to Composer, updating Flarum can mean two things:
 
 ### Updating existing version and extensions
 
-Forthcoming.
+To update the existing build version of Flarum, tunnel into the host server, change into the install directory, and run:
+
+```
+composer update
+```
 
 ### Updating to new flarum version
 
-The process to update from one beta release to the next, or to the first stable release, might vary, so we won't know what the command is until the next version is available.
-
-In the meantime, you can install and update extensions individually...
+Should an upgrade version require a different install command, it will be made clear at time of availability.
 
 ### Installing Flarum extensions individually
 
-Again, use Terminal to get into the Flarum install directory, then run:
+Again, tunnel into host server and change into install directory. Then run:
 
-`composer require {dev}/flarum-ext-{name}`
+```
+composer require {dev}/flarum-ext-{name}
+```
 
-...where `{dev}` is the developers nick, and `{name}` is the name of the extension. For example, one extension CSF has installed is s9e’s extension called _mediaembed_, which is installed (and later udpated) using: 
+...where `{dev}` is the developers nickname, and `{name}` is the name of the extension. For example, one extension CSF has installed is s9e’s extension called _mediaembed_, which is installed (and later udpated) using: 
 
-`composer require s9e/flarum-ext-mediaembed`
+```
+composer require s9e/flarum-ext-mediaembed
+```
 
