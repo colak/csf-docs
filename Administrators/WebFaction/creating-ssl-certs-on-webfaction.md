@@ -135,7 +135,7 @@ In the WebFaction dashboard, go to **DOMAINS/WEBSITES** > **Websites**. Then for
 
 Repeat the above steps for the other three websites.
 
-In a new browser tab, open and refresh the non-secured domains with and without “www” (i.e. _http://domain.tld_ and _http://www.domain.tld_) until you see a **502 Bad Gateway** error in each case. That's what you want to see!
+In a new browser tab, open and refresh the non-secured domains with and without “www” (i.e. `http://domain.tld` and `http://www.domain.tld`) until you see a **502 Bad Gateway** error in each case. That's what you want to see!
 
 If you don’t see the Bad Gateway error after a little time and refreshing, then you probably don’t have your domains/websites setup correctly in the WebFaction dashboard.
 
@@ -237,7 +237,7 @@ RewriteCond %{HTTP:X-Forwarded-SSL} !on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 ```
 
-If you don’t want to use the redirect rules, just leave the two lines commented out. In this case, a site visitor can access _http://domain.tld_ without SSL security applied and without getting any security errors. But if they go to _https://domain.tld_, then SSL will be active and any problems (e.g. expired certificate) will show errors to the visitor at that location.
+If you don’t want to use the redirect rules, just leave the two lines commented out. In that case, a site visitor can access `http://domain.tld` without SSL security applied and without getting any security errors. But if they go to `https://domain.tld`, then SSL will be active and any problems (e.g. expired certificate) will show errors to the visitor at that location.
 
 ## 10) Renew certificates on WebFaction
 
