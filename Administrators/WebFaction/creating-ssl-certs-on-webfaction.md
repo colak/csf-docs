@@ -72,13 +72,17 @@ When created, click the app’s name in the app list to see its properties, and 
 
 ## 3) Install acme.sh
 
-Neil Pang’s [acme.sh](https://github.com/Neilpang/acme.sh.git) is a “pure-shell” implementation of the [Automatic Certificate Management Environment](https://github.com/ietf-wg-acme/acme) (ACME). Pang’s acme.sh will organize your generated certificates and create a cron job to automatically check them for renewal. By adding an email address, it will notify you in advance of when certificates will expire.
+Neil Pang’s [acme.sh](https://github.com/Neilpang/acme.sh.git) is a highly-configurable “pure-shell” implementation of the [Automatic Certificate Management Environment](https://github.com/ietf-wg-acme/acme) (ACME). See the full set of [options and parameters](https://github.com/Neilpang/acme.sh/wiki/Options-and-Params) in the associated wiki, and spend some time looking them over, if you like, or proceed as we have below. 
+
+When the time comes, WebFaction allows you to upload your certificates or copy/paste them via the dashboard. If you want to use the upload method, you might want to install _acme.sh_ on your local system. But if you want to use the copy/paste method, then you could install _acme.sh_ on your local system or on WebFaction’s server. It makes no difference because you’ll be copying certs directly from the command-line either way.
+
+We have chosen to use the copy/paste method later, and we’ve installed _acme.sh_ on WebFaction’s server. The rest of these instructions are with that context in mind. 
 
 Process:
 
 Tunnel into the WebFaction server via SSH, then run the following series of commands, one at a time.
 
-**Note:** The last command line below assumes you want to be notified by Let’s Encrypt in advance of cert expiration dates, in which case you would provide your email address, as indicated. This is probably a good idea with WebFaction because there is no auto-renewal of certificates with WebFaction; [you must manually upload them in the WebFaction dashboard](https://docs.webfaction.com/user-guide/websites.html?highlight=ssl#renew-a-certificate). See section 8 about renewal dates and notification intervals.):
+**Note:** The last command line below assumes you want to be notified by Let’s Encrypt in advance of cert expiration dates, in which case you would provide your email address, as indicated. This is probably a good idea with WebFaction because there is no auto-renewal of certificates with WebFaction; you must manually add and renew them in the WebFaction dashboard. See section 8 about renewal dates and notification intervals.):
 
 1. `mkdir -p ~/src`
 2. `cd ~/src`
@@ -86,25 +90,27 @@ Tunnel into the WebFaction server via SSH, then run the following series of comm
 4. `cd ./acme.sh`
 5. `./acme.sh --install --accountemail username@emaildomain.tld`
 
-The "install" routine creates a directory at _~/.acme.sh/_, in which all your certificates will go in respective sub-directories according to the domains you identify in the next section.   
+The "install" routine creates a directory at _~/.acme.sh/_, and your certificates will go in respective sub-directories there according to the domains they apply to.   
 
-**Important:** After doing this install, exit your SSH connection and reconnect again. 
+After you install _acme.sh_, exit your SSH connection with WebFaction and reconnect again. 
 
-## 4) Mount the letsencrypt_validation app
+## 4) Mount the letsencrypt_validation app 
 
-**Note:** This step takes your site offline while you do this. 
+Before issuing certificates for a given domain, you need to mount the _letsencrypt_validation_ app created in section #2 on the four associated ‘websites’ for the domain in question. For example, for domain csf.community, the _letsencrypt_validation_ app must be mounted on csf, csf_ssl, csf_www, csf_www_ssl.
 
-Before issuing certificates for a given domain using the _letsencrypt_validation_ app created in step #2, you need to mount that app on the associated websites for the domain in question. Using the csf.community domain as example, we would mount the _letsencrypt_validation_ app on each of the four domains described in step #1: csf, csf_ssl, csf_www, csf_www_ssl.
+**Note:** This will take your website offline while you do this.
 
-First go to the WebFaction dashboard and get into the **Websites** list. Then for each associated website, you’ll do the following:
+Process:
 
-1. Click the first associated “Website” name in the list. (This opens the properties form).
+In the WebFaction dashboard, go to **DOMAINS/WEBSITES** > **Websites**. Then for each associated website, you’ll do the following:
+
+1. Click the first associated “Website” name in the list (e.g. csf). (This opens the properties form).
 2. In the **Contents** field, delete the application that’s currently assigned by clicking the little “x”.
 3. Click the **Add an application** drop-down menu button, then select the “_Reuse an existing application_” option.
 4. In the resulting pop-up list, click the _letsencrypt_validation_ app, then click **Save**.
 5. Click **Save** again at bottom of the website properties form.
 
-Repeat the above for the other three websites (e.g. csf_ssl, csf_www, csf_www_ssl).
+Repeat the above steps for the other three websites (e.g. csf_ssl, csf_www, csf_www_ssl).
 
 In a new browser tab, open and refresh the non-secured domains with and without “www” (i.e. _http://domain.tld_ and _http://www.domain.tld_) until you see a "502 Bad Gateway" error in each case. That's what you want to see!
 
@@ -116,21 +122,23 @@ Go back to your SSH connection with WebFaction at the commandline (reconnect if 
 
 Change into the _/src_ directory:
 
-`cd ~/src`
+```
+cd ~/src
+```
 
 Then run the following single command, but replace `NNNNN` with the port number from step 2 and `domain.tld` with the appropriate domain in focus:
 
-	Le_HTTPPort=NNNNN acme.sh --test --issue -d domain.tld -d www.domain.tld --standalone
+	Le_HTTPPort=NNNNN acme.sh --test --issue --standalone -d domain.tld -d www.domain.tld
 
-This command instructs _acme.sh_ to bind to port `NNNNN` (the _letsencrypt_validation_ application port from step #2), thus proving to the Certificate Resource Authority (CSR) that you control the domains for which you are issuing a certificate. By doing it this way, you don’t have to separately create a CSR in the WebFaction dashboard. 
+This command instructs _acme.sh_ to bind to port `NNNNN` (the _letsencrypt_validation_ application port from step #2), thus proving to the Certificate Resource Authority (CSR) — in this case, Let’s Encrypt — that you control the domains for which you are issuing a certificate. By doing it this way, you don’t have to separately create a CSR in the WebFaction dashboard later. 
 
-If all goes well, you'll see something like this at the end of the generated output:
+If all goes well, you will see something like this at the end of the generated output:
 
 ```
 [Fri Feb 10 13:53:02 UTC 2017] Cert success.
 -----BEGIN CERTIFICATE-----
 MIIFAjCCA+qgAwIBAgISAyVE+7f/wnvVKi5El7xSsbrmMA0GCSqGSIb3DQEBCwUA
-           lots of other rows fill in here
+…etc
 GKicLVeF6TTuWVTACY1QTY8T2eJMWEjbT0QvqzisJyXpp3e8+Xw=
 -----END CERTIFICATE-----
 [Fri Feb 10 13:53:02 UTC 2017] Your cert is in  /home/username/.acme.sh/domain.tld/domain.tld.cer 
@@ -141,11 +149,13 @@ You won’t use any of this, because it’s just a test, but that’s what you w
 
 But first remove the test certificate directory you just created:
 
-`rm -R ~/.acme.sh/domain.tld` 
+```
+rm -R ~/.acme.sh/domain.tld
+``` 
 
 ## 6) Create the real SSL certificate(s)
 
-**Attention:** Unlike the test run before, this real run counts against the weekly rate limits set by Let’s Encrypt. If you make a mistake and have to redo it, the redo will count against your limit of 5 duplicate certification requests for the week. Let’s do this…
+**Note:** Unlike the test run before, this real run counts against the weekly rate limits set by Let’s Encrypt. If you make a mistake and have to redo it, the redo will count against your limit of 5 duplicate certification requests for the week. Let’s do this…
 
 If you’re not already there, change into the _/src_ directory:
 
@@ -156,20 +166,20 @@ cd ~/src
 Then run the Let’s Encrypt generation command again with the same port number used in the test, but _without_ the `--test` part in the command as before:
 
 ```
-Le_HTTPPort=NNNNN acme.sh --issue -d domain.tld -d www.domain.tld --standalone
+Le_HTTPPort=NNNNN acme.sh --issue --standalone -d domain.tld -d www.domain.tld
 ```
 
-You should achieve the same result as previously with the test, except now you have real certificate(s) ready for installation.
+You should achieve the same kind of output as with the test, except now you have real certificate(s) ready for installation.
 
 ## 7) In WebFaction, switch back to your original webapp
 
-Before proceeding with installation certificates, you need to switch the web application back to the original application for the four websites — a reveral of what you did in step #4. **This brings your site back online.**
+Before proceeding with installation certificates, you need to switch the mounted web application back to the original application for the four websites. In other words, a reveral of what you did in section #4. **This brings your site back online.**
 
 ## 8) Install certificates on WebFaction
 
-WebFaction allows you to either upload your certificates from your local server (e.g. macOS Apache server) or copy/paste them from somewhere else, such as your WebFaction server. We describe  the copy/paste process because we’ve already installed _acme.sh_ on the WebFaction server. (To do the upload process, you’d first have to install _acme.sh_ on your local server, generate the certs there as described above, and then use WebFaction’s file upload utility.) 
+Go to the WebFaction dashboard, then to **Domains/Websites** > **SSL certificates**. If you haven’t added any certificates yet,  your certs list will be empty. Now you will create one.
 
-Go to the WebFaction dashboard, then to **Domains/Websites** > **SSL certificates**. If you haven’t added any certificates yet,  your certs list will be empty. Then:
+Process:
 
 1. Click the **Add SSL certificate** drop-down menu button.
 2. Then click the **Copy & paste certificate** option. (The copy/paste form appears.)
@@ -212,7 +222,7 @@ If you don’t want to use the redirect rules, just comment out the last two lin
 
 Renewing certificates on WebFaction is the same as adding them, but without the extra labor of creating domains and binding ports.
 
-First you’ll use acme.sh to generate new certs as described in section #6.
+First you’ll use _acme.sh_ to generate new certs as described in section #6.
 
 Then you’ll update the expiring certs in the WebFaction dashboard using the copy/paste method described in section #8. In this case, replace the old cert hashes with the new hashes. 
 
