@@ -103,7 +103,7 @@ Process:
 
 Tunnel into the WebFaction server via SSH, then run the following series of commands, one at a time.
 
-**Note:** As described earlier about LE renewal dates and notifications, you need to add your email address in the line below. If you’d rather work by your own calendar without emails, then just use `./acme.sh --install`:
+**Note:** As described earlier about LE renewal dates and notifications, you need to add your email address in the last line below. If you’d rather work by your own calendar without emails, then just use `./acme.sh --install`:
 
 1. `mkdir -p ~/src`
 2. `cd ~/src`
@@ -113,7 +113,12 @@ Tunnel into the WebFaction server via SSH, then run the following series of comm
 
 The "install" routine creates a directory at _~/.acme.sh/_, and your certificates will go in respective sub-directories there according to the domains they apply to.   
 
-After you install _acme.sh_, exit your SSH connection with WebFaction and reconnect again. 
+After you install _acme.sh_, exit your SSH connection with WebFaction and reconnect again.
+
+### Handling email addresses after installing:
+
+1.  To change your email address after installing _acme.sh_, use the `--update-account` option. (Need link to wiki page for this.)
+2.  To remove your email address, you’ll need to uninstall _acme.sh_, and remove the `~/.acme.sh` folder, then re-install it all fresh again without using the `--accountemail` option. (A simpler command option for this is coming, but not ready yet as of 20 Feb 2017.)
 
 ## 4) Mount the letsencrypt_validation app 
 
@@ -149,13 +154,23 @@ Change into the _/src_ directory:
 cd ~/src
 ```
 
-Then run the following single command, but replace `NNNNN` with the port number from step 2 and `domain.tld` with the domain you’re creating certificates for:
+Then run the following single command, but replace `NNNN` with the port number from step 2 and `domain.tld` with the domain you’re creating certificates for:
 
-	Le_HTTPPort=NNNNN acme.sh --test --issue --standalone -d domain.tld -d www.domain.tld
+	acme.sh --http-port NNNN --test --issue --standalone -d domain.tld -d www.domain.tld
 
-This command instructs _acme.sh_ to bind to the port from step #2, thus proving to LE that you control the domains for which you are issuing a certificate. By doing it this way, you won’t have to create a CSR in the WebFaction dashboard later. 
+A little explanation about the options and parameters…
 
-If all goes well, you will see certificate data info like this at the end of the generated output:
+The `--http-port` option, and associated `NNNN` parameter, instructs _acme.sh_ to bind to the port number you took note of in section #2 (replacing `NNNN` with the noted number), thus proving to LE that you control the domains for which you are issuing a certificate. By doing it this way, you won’t have to create a CSR in the WebFaction dashboard later. 
+
+The `--test` parameter prevents this test run from being counted  against LE’s limit of 5 duplicate cert requests per week, as described in the _About Let’s Encrypt_ section at head of this doc.
+
+The `--issue` option, in not so technical terms, is the exutive order from the command that says “create the certs”.
+
+The `--standalone` option, [as explained by the developer of _acme.sh_](https://github.com/Neilpang/acme.sh/issues/646#issuecomment-280967150), is used when you don't have a webserver running. The option instructs _acme.sh_ to start an http server internally, which listens at port 80 by default (but overridden by port set with `NNNN`) to finish the validation. Otherwise there would be a conflict on 80 port. This option sounds like it could be redundant since we’re clarify a specific port and overriding port 80, but the option does work when used, so you might not want to drop it. (Dropping it has not been tested.)
+
+And the `-d` option, and associated domain parameter, is how you indicate which domain to create the certificate for. You can string as many domain names into the command as you want, but just make sure each name includes an entry with and without “www”.
+
+If all goes well when running the command, you will see certificate information like the following at the end of the generated output:
 
 ```
 [Fri Feb 10 13:53:02 UTC 2017] Cert success.
@@ -168,7 +183,7 @@ GKicLVeF6TTuWVTACY1QTY8T2eJMWEjbT0QvqzisJyXpp3e8+Xw=
 [Fri Feb 10 13:53:02 UTC 2017] Your cert key is in  /home/username/.acme.sh/domain.tld/domain.tld.key
 ```
 
-You won’t use any of this, because it’s just a test, but that’s what you want to see. Now that you know the certificate can be issued without errors, you're ready to issue it for real.
+You won’t use any of this, because it’s just a **test**, but that’s what you want to see. Now that you know the certificate can be issued without errors, you're ready to issue it for real.
 
 First, remove the test certificate directory you just created:
 
@@ -180,7 +195,7 @@ rm -R ~/.acme.sh/domain.tld
 
 **Note:** Unlike the test run before, this real run counts against the weekly rate limits described earlier. If you make a mistake and have to redo it, the redo will count against your limit of 5 duplicate certification requests for the week. 
 
-Be brave! Let’s do this… If you’re not already there, change into the _/src_ directory:
+If you’re not already there, change into the _/src_ directory:
 
 ```
 cd ~/src
@@ -189,18 +204,18 @@ cd ~/src
 Then run the LE generation command again with the same port number used in the test, but _without_ the `--test` part in the command as before:
 
 ```
-Le_HTTPPort=NNNNN acme.sh --issue --standalone -d domain.tld -d www.domain.tld
+acme.sh --http-port NNNN --issue --standalone -d domain.tld -d www.domain.tld
 ```
 
 You should achieve the same kind of output as with the test, except now you have real certificate(s) ready for installation.
 
 ## 7) In WebFaction, switch back to your original webapp
 
-Before proceeding with installation certificates, you need to switch the mounted web application back to the original application for the four websites. In other words, a reveral of what you did in section #4. **This brings your site back online.**
+Before proceeding with installing the certificates, you need to switch the mounted web application back to the original application for the four websites. In other words, a reveral of what you did in section #4. **This brings your site back online.**
 
 ## 8) Install certificates on WebFaction
 
-Go to the WebFaction dashboard, then to **Domains/Websites** > **SSL certificates**. If you haven’t added any certificates yet,  your certs list will be empty. Now you will create one.
+In the WebFaction dashboard, go to **Domains/Websites** > **SSL certificates**. If you haven’t added any certificates yet, your certs list will be empty. Now you will create one.
 
 Process:
 
@@ -241,9 +256,7 @@ If you don’t want to use the redirect rules, just leave the two lines commente
 
 ## 10) Renew certificates on WebFaction
 
-Renewing certificates on WebFaction is the same as adding them, but without the extra labor of creating domains and binding ports.
-
-Before renewing certificates, update the _acme.sh_ script. It’s continually being updated and you’ll want to ensure you have the latest working build:
+Before renewing certificates, update the _acme.sh_ script. It’s continually being revised/improved and you’ll want to ensure you have the latest working build:
 
 ```
 acme.sh --upgrade
