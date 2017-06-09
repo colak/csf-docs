@@ -87,23 +87,17 @@ In the WebFaction dashboard, go to **DOMAINS/WEBSITES** > **Applications**, and 
 
 Leave the **Open port** box unchecked.
 
-When created, click the app’s name in the webapp’s list to see its properties, and make note of the **Port** number. You’ll need it later in section #5.
-
 ## 3) Install _acme.sh_
 
 Neil Pang’s [_acme.sh_](https://github.com/Neilpang/acme.sh.git) is a highly-configurable “pure-shell” implementation of the [Automatic Certificate Management Environment](https://github.com/ietf-wg-acme/acme) (ACME), and takes the place of using Certbot, which LE describes on it’s own site. 
 
-See the full set of _acme.sh_ command [options and parameters](https://github.com/Neilpang/acme.sh/wiki/Options-and-Params) in the associated wiki. Spend some time looking them over, or proceed as we have below. 
+See the full set of _acme.sh_ command [options and parameters](https://github.com/Neilpang/acme.sh/wiki/Options-and-Params) in the associated wiki. Spend some time looking them over, or proceed as we have below. Also keep in mind that acme.sh is actively worked on and the command options evolve. (These instructions have been updated 3 times just to keep up with the changing commands.)
 
-**Attention:** When the time comes, WebFaction allows you to upload your certificates or copy/paste them. If you want to use the upload method, you might want to install _acme.sh_ on your local system. But if you want to use the copy/paste method, then you could install _acme.sh_ on your local system or on WebFaction’s server. It makes no difference in the latter case because you’ll be copying certificate data directly from the command-line either way.
+Notes about adding certificates to WebFaction dashboard... WebFaction allows you to upload your certificates or copy/paste them. If you want to use the upload method, you might want to install _acme.sh_ on your local system. But if you want to use the copy/paste method, then you could install _acme.sh_ on your local system or on WebFaction’s server. It makes no difference in the latter case because you’ll be copying certificate data directly from the command-line either way. _We have chosen to use the copy/paste method, and we’ve installed _acme.sh_ on WebFaction’s server. The rest of these instructions are with that context in mind._ 
 
-We have chosen to use the copy/paste method, and we’ve installed _acme.sh_ on WebFaction’s server. The rest of these instructions are with that context in mind. 
+**Process:**
 
-Process:
-
-Tunnel into the WebFaction server via SSH, then run the following series of commands, one at a time.
-
-**Note:** As described earlier about LE renewal dates and notifications, you need to add your email address in the last line below. If you’d rather work by your own calendar without emails, then just use `./acme.sh --install`:
+Tunnel into the WebFaction server via SSH, then run the following series of commands, one at a time. (Note about line 5: As described earlier about LE renewal dates and notifications, you need to add your email address in the last command. If you’d rather work by your own calendar without emails, then the 5th line is just `./acme.sh --install`.)
 
 1. `mkdir -p ~/src`
 2. `cd ~/src`
@@ -154,23 +148,21 @@ Change into the _/src_ directory:
 cd ~/src
 ```
 
-Then run the following single command, but replace `NNNN` with the port number from step 2 and `domain.tld` with the domain you’re creating certificates for:
+For certificates at WebFaction on an Apache server, you can test run and create new certificates using one of two modes: **webroot mode** (multiple domains) or **Apache mode**. The commands for these modes (and other non-usable modes in this case) are available in the [acm.sh instructions](https://github.com/Neilpang/acme.sh/wiki/How-to-issue-a-cert), but we describe the webroot mode here for multiple domains (i.e. with and without "www"). 
 
-	acme.sh --http-port NNNN --test --issue --standalone -d domain.tld -d www.domain.tld
+Run the following single webroot command, but replace `domain.tld` with the domain you’re creating certificates for, `user` with your WebFaction username, and `app` with the name of the WebFaction webapp for the domain:
 
-A little explanation about the options and parameters…
+```
+acme.sh --test --issue -d domain.tld -d www.domain.tld -w /home/user/webapps/app
+```
 
-The `--http-port` option, and associated `NNNN` parameter, instructs _acme.sh_ to bind to the port number you took note of in section #2 (replacing `NNNN` with the noted number), thus proving to LE that you control the domains for which you are issuing a certificate. By doing it this way, you won’t have to create a CSR in the WebFaction dashboard later. 
+The `--test` parameter prevents this test run from being counted against LE’s limit of 5 duplicate cert requests per week, as described in the _About Let’s Encrypt_ section at head of this doc.
 
-The `--test` parameter prevents this test run from being counted  against LE’s limit of 5 duplicate cert requests per week, as described in the _About Let’s Encrypt_ section at head of this doc.
+The `--issue` option, in not so technical terms, is the executive order from the command that says “create the certs”.
 
-The `--issue` option, in not so technical terms, is the exutive order from the command that says “create the certs”.
+The `-d` option, and associated domain parameter, is how you indicate which domain to create the certificate for. Since we're specifically using the webroot mode in this case, you can only add as many of these as applies for the given domain name.
 
-The `--standalone` option, [as explained by the developer of _acme.sh_](https://github.com/Neilpang/acme.sh/issues/646#issuecomment-280967150), is used when you don't have a webserver running. The option instructs _acme.sh_ to start an http server internally, which listens at port 80 by default (but overridden by port set with `NNNN`) to finish the validation. Otherwise there would be a conflict on 80 port. This option sounds like it could be redundant since we’re clarify a specific port and overriding port 80, but the option does work when used, so you might not want to drop it. (Dropping it has not been tested.)
-
-And the `-d` option, and associated domain parameter, is how you indicate which domain to create the certificate for. You can string as many domain names into the command as you want, but just make sure each name includes an entry with and without “www”.
-
-If all goes well when running the command, you will see certificate information like the following at the end of the generated output:
+If all goes well, when running the command, you will see certificate information like the following at the end of the generated output:
 
 ```
 [Fri Feb 10 13:53:02 UTC 2017] Cert success.
@@ -183,9 +175,9 @@ GKicLVeF6TTuWVTACY1QTY8T2eJMWEjbT0QvqzisJyXpp3e8+Xw=
 [Fri Feb 10 13:53:02 UTC 2017] Your cert key is in  /home/username/.acme.sh/domain.tld/domain.tld.key
 ```
 
-You won’t use any of this, because it’s just a **test**, but that’s what you want to see. Now that you know the certificate can be issued without errors, you're ready to issue it for real.
+You won’t use any of this, because it’s just a **test**, but that’s what you want to see. Now that you know the certificate can be issued without errors, you're ready to issue certificates for real.
 
-First, remove the test certificate directory you just created:
+First, remove the test certificate directory you just created, which is necessary:
 
 ```
 rm -R ~/.acme.sh/domain.tld
@@ -201,13 +193,13 @@ If you’re not already there, change into the _/src_ directory:
 cd ~/src
 ```
 
-Then run the LE generation command again with the same port number used in the test, but _without_ the `--test` part in the command as before:
+Then run the same command as before except this time _without_ the `--test` option in the command, remembering to change the dummy values here, of course:
 
 ```
-acme.sh --http-port NNNN --issue --standalone -d domain.tld -d www.domain.tld
+acme.sh --issue -d domain.tld -d www.domain.tld -w /home/user/webapps/app
 ```
 
-You should achieve the same kind of output as with the test, except now you have real certificate(s) ready for installation.
+You should achieve the same kind of output as with the test, except now you have real certificate(s) ready for use.
 
 ## 7) In WebFaction, switch back to your original webapp
 
@@ -259,6 +251,7 @@ If you don’t want to use the redirect rules, just leave the two lines commente
 Before renewing certificates, update the _acme.sh_ script. It’s continually being revised/improved and you’ll want to ensure you have the latest working build:
 
 ```
+cd ~/src
 acme.sh --upgrade
 ```
 
