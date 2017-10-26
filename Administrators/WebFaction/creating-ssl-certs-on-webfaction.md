@@ -262,3 +262,10 @@ acme.sh --renew -d domain.tld -d www.domain.tld --force
 ```
 
 Then follow the copy/paste steps in section #8 to replace the old cert hashes with the new ones.
+<<<<<<< Updated upstream
+=======
+
+## CSF admin reference only
+
+* https://github.com/Neilpang/acme.sh/issues/646
+>>>>>>> Stashed changes
