@@ -35,7 +35,7 @@ Let’s begin.
 
 ## 1) Create CNAME records for Class B redirection on WebFaction
 
-If you like using “www” in URLs, then this may not concern you. But we at CSF don’t like using “www”. We prefer a Class B redirect. In other words, we want site visitors to land at `https://domain.tld` (no www), whether they add “www” in the URL or not. 
+If you like using “www” in URLs, then this may not concern you. But if you don’t like using ‘www’, then a Class B redirect is what you need. In other words, you want site visitors to land at `https://domain.tld` (no www), whether they add “www” in the URL or not. 
 
 To set up a Class B situation on WebFaction, you must have a CNAME record in the WebFaction dashboard, **in addition** to using mode_rewrite in the app’s _.htaccess_ file to handle the Class B redirection.
 
@@ -43,15 +43,15 @@ How it works:
 
 For each domain on WebFaction that you want a Class B redirect for, you need two website names, one for the target domain and one for the CNAME record. For example, our CSF domain is setup like this:
 
-* **csf** = http://csf.community (target domain)
-* **csf_www** = http://www.csf.community (CNAME record)
+* **d1** = http://domain1.tld (target domain)
+* **d1_www** = http://www.domain1.tld (CNAME record)
 
-But to have SSL certificates on top of the Class B CNAME redirects, WebFaction requires _four_ website records — two for each domain type. We created and named the associated records for CSF with the following convention (in bold):
+But to have SSL certificates on top of the Class B CNAME redirects, WebFaction requires _four_ website records — two for each domain type:
 
-* **csf** = [http://csf.community](http://csf.community) (Not secured)
-* **csf_ssl** = [https://csf.community](https://csf.community) (Secured, our final destination)
-* **csf_www** = [http://www.csf.community](http://www.csf.community) (CNAME record)
-* **csf_www_ssl** = [https://www.csf.community](https://www.csf.community) (CNAME record) 
+* **d1** = http://domain1.tld (Not secured)
+* **d1_ssl** = https://domain1.tld (Secured, our final destination)
+* **d1_www** = http://www.domain1.tld (CNAME record)
+* **d1_www_ssl** = https://www.domain1.tld (CNAME record) 
 
 The associated mod_rewrite rules in your _.htaccess_ file should  then be:
 
@@ -67,7 +67,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 The first set of rules redirect calls to “www” to the domain without “www”, and the second set of rules redirects calls to “http” to “https” only.
 
-**Attention:** For the time being, you should comment out the two lines for the second set of rules until the certificates are actually installed. You’ll then uncomment them again in section #9 later. At that point, no matter how a visitor gets to your site, they should only land on and see the domain as `http://domain.tld`. For example, click any link in the list above for CSF’s website. The destination should always end up being `https://csf.community`, which is what we want for CSF. 
+**Attention:** For the time being, you should comment out the two lines for the second set of rules until the certificates are actually installed. You’ll then uncomment them again in section #9 later. At that point, no matter how a visitor gets to your site, they should only land on and see the domain as `http://domain.tld`. 
 
 If you’re following these instructions and want the Class B redirects too, you need to have a similar set of four website records setup in the WebFaction dashboard _before_ proceeding with the rest of these instructions. 
 
@@ -118,7 +118,7 @@ After you install _acme.sh_, exit your SSH connection with WebFaction and reconn
 
 Before issuing certificates for a given domain, you need to mount the _letsencrypt_validation_ app created in section #2 on the four associated ‘websites’ for the domain in question. 
 
-As example, for the csf.community domain, we mounted the _letsencrypt_validation_ app on the 4 associated “websites”: csf, csf_ssl, csf_www, csf_www_ssl.
+As example, for the csf.community domain, we mounted the _letsencrypt_validation_ app on the 4 associated “websites”: d1, d1_ssl, d1_www, d1_www_ssl.
 
 **Note:** This will take your website offline while you do this. You put it back online again in section #7.
 
@@ -203,7 +203,7 @@ You should achieve the same kind of output as with the test, except now you have
 
 ## 7) In WebFaction, switch back to your original webapp
 
-Before proceeding with installing the certificates, you need to switch the mounted web application back to the original application for the four websites. In other words, a reveral of what you did in section #4. **This brings your site back online.**
+Before proceeding with installing the certificates, you need to switch the mounted web application back to the original application for the four websites. In other words, a reversal of what you did in section #4. **This brings your site back online.**
 
 ## 8) Install certificates on WebFaction
 
