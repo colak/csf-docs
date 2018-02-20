@@ -2,9 +2,9 @@
 
 There are different ways to setup Let’s Encrypt SSL certificates on WebFaction. One popular way has been by using Neil Pang’s well-maintained acme.sh script ([for example](https://github.com/content-strategy-forum/csf-docs/blob/master/Administrators/WebFaction/creating-ssl-certs-on-webfaction.md)).
 
-Lately, however, WebFaction has been encouraging its customers to use a different method, the _letsencrypt_webfaction_ script method, based on the [will-in-wi](https://github.com/will-in-wi/letsencrypt-webfaction)’s work. This alternate methods employs a custom Ruby gem and a cron job, enabling automatic renewals of the certificates, and WebFaction says it’s more suited to the way they have things setup.
+Lately, however, WebFaction has been encouraging its customers to use a different method, which, for lack of a better label, we might call the “_letsencrypt_webfaction_” method, based on [will-in-wi](https://github.com/will-in-wi/letsencrypt-webfaction)’s work. This alternate methods employs a Ruby gem and a cron job, enabling automatic renewals of the certificates. WebFaction even says somewhere in its community forum that this method is better suited to the way they have things setup.
 
-This tutorial explains the latter process.
+Thus, here’s a (beta) tutorial for the “_letsencrypt_webfaction_” method.
 
 ## Install the letsencrypt_webfaction gems:
 
