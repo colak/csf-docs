@@ -1,4 +1,4 @@
-# Let’s Encrypt on WebFaction using _letsencrypt_webfaction_
+# SSL on WebFaction using _letsencrypt_webfaction_ method
 
 There are different ways to setup Let’s Encrypt SSL certificates on WebFaction. One popular way has been by using Neil Pang’s well-maintained acme.sh script ([for example](https://github.com/content-strategy-forum/csf-docs/blob/master/Administrators/WebFaction/creating-ssl-certs-on-webfaction.md)).
 
