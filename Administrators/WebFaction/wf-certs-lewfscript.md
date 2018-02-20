@@ -6,7 +6,7 @@ Lately, however, WebFaction has been encouraging its customers to use a differen
 
 Thus, here’s a (beta) tutorial for the “_letsencrypt_webfaction_” method.
 
-## Install the letsencrypt_webfaction gems:
+## Install the _letsencrypt_webfaction_ gems:
 
 Tunnel into your WebFaction server using SSH. Get into your user directory if not already there:
 
@@ -24,7 +24,7 @@ This installs the latest version of the script and it’s components (docs, gems
 
 Repeat this command in the future whenever you create new certs to ensure you have the latest version of the script.
 
-## Edit .bash_profile file for testing
+## Edit user _.bash_profile_ file
 
 Now you’ll edit the _.bash_profile_ file to initially make it easy to manually install and test certificates.
 
@@ -51,7 +51,7 @@ source ~/.bash_profile
 
 ## Install certificates
 
-First a _nota bene_: A single certificate can apply to a given root domain and any number of subdomains on that root. Even if you don’t have any special subdomains, you’re likely to still need one for calls to ‘www’ if you prefer using Class B redirects away from it (in which case you will setup CNAMEs for in the WebFaction dashboard). So at minimum you might have a cert for adding ssl to:
+First a _n.b._: A single certificate can apply to a given root domain and any number of subdomains on that root. Even if you don’t have any special subdomains, you’re likely to still need one for calls to ‘www’ if you prefer using Class B redirects away from it (in which case you will setup CNAMEs for in the WebFaction dashboard). So at minimum you might have a cert for adding ssl to:
 
 * _domain.tld_
 * _www.domain.tld_
