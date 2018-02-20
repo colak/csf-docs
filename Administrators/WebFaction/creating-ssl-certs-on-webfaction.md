@@ -1,5 +1,3 @@
-{{TOC}}
-
 # Let’s Encrypt SSL Certificates on WebFaction
 
 WebFaction allows use of [Let’s Encrypt](https://letsencrypt.org/) (LE) to setup SSL certificates on hosted domains. For some web hosts the process can be setup so certificates renew automatically, but for WebFaction it’s a kind of two-step manual process: 
@@ -262,8 +260,3 @@ acme.sh --renew -d domain.tld -d www.domain.tld --force
 ```
 
 Then follow the copy/paste steps in section #8 to replace the old cert hashes with the new ones.
-
-## CSF admin reference only
-
-* https://github.com/Neilpang/acme.sh/issues/646
-
