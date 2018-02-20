@@ -196,7 +196,7 @@ cd ~/src
 Then run the same command as before except this time _without_ the `--test` option in the command, remembering to change the dummy values here, of course:
 
 ```
-acme.sh --issue -d domain.tld -d www.domain.tld -w /home/user/webapps/app
+acme.sh --issue -d domain.tld -d www.domain.tld -w ~/webapps/appname
 ```
 
 You should achieve the same kind of output as with the test, except now you have real certificate(s) ready for use.
@@ -213,8 +213,8 @@ Process:
 
 1. Click the **Add SSL certificate** drop-down menu button.
 2. Then click the **Copy & paste certificate** option. (The copy/paste form appears.)
-3. **Name** field: Add a name for your certificate. As a pattern, we use the name of the website (from the four associated websites described in section #1) that reflects the domain we desire visitors to see (i.e. secured with Class B redirection) — _domain_ssl_.
-4. **Domains** and **Expiry date** fields: Ignore these. WebFaction prevents any entry there anyway.
+3. **Name** field: Add a name for your certificate. A good pattern is _rootdomain_ssl_.
+4. **Domains** and **Expiry date** fields: Ignore these. WebFaction fills them automatically from the certification files.
 5. **Certificate** field: Copy the certificate hash that was output on the command-line from section #6, including the `BEGIN` and `END` lines, and paste it into this field.
 6. **Private key** field: In the command-line output from section #6, you’ll be given a path to your cert key file. Use the `cat` command (`cat ~/.acme.sh/domain.tld/domain.tld.key`) to display the file’s contents on the command-line, which is the cert key hash. Copy the hash, including the `BEGIN` and `END` lines, and paste it into this field.
 7. **Intermediates/bundle** field: _acme.sh_ will give you files for this too, and WebFaction says to add them if you have them. Repeat the `cat` command but using the new path to get the intermediates cert hash (`cat .acme.sh/domain.tld/ca.cer`). Copy the hash, including the `BEGIN` and `END` lines, and paste it into this field.
@@ -262,10 +262,8 @@ acme.sh --renew -d domain.tld -d www.domain.tld --force
 ```
 
 Then follow the copy/paste steps in section #8 to replace the old cert hashes with the new ones.
-<<<<<<< Updated upstream
-=======
 
 ## CSF admin reference only
 
 * https://github.com/Neilpang/acme.sh/issues/646
->>>>>>> Stashed changes
+
