@@ -10,44 +10,73 @@ As a former user of Pang’s general acme.sh method, I have opted to use Greg Br
 
 Two things to know to get off on the right foot.
 
-### Scope of certifices
+### Scope of certificates
 
-First, something to keep in mind when you configure your cert assignments in the WebFaction dashboard… You can not have more than one (sub)domain per certificate, excluding the “www” configuration, which is allowed. For example, you can not apply a single cert to all of these:
+Something to keep in mind when you configure your cert assignments in the WebFaction dashboard… You can not have more than one (sub)domain per certificate, excluding the “www” configuration, which is allowed. For example, you can not apply a single cert to all of these:
 
 - domain.tld
 - www.domain.tld
 - sub.domain.tld
 - www.sub.domain.tld
 
-That requires 2 certificates, each applied to a domain with/without “www”. Cert 1 (domain.tld and www.domain.tld). Cert 2 (sub.domain.tld and www.sub.domain.tld).
+That requires two certificates, one for _domain.tld_ and -_www.domain.tld_ and another for _sub.domain.tld_ and _www.sub.domain.tld_.
 
 ### _.well-known_ folder
 
-The _.well-known_ folder is supposed to be created dynamically when running the script. It’s added to `~/webapps/appname/.well-known`. It is where the script places a code, it then sends an API request to the Let’s Encrypt server, and their API checks if the requested code can be generated on the domain. This process verifies that you have control of the domain and have permission to be issuing certs on its behalf.
+The _.well-known_ folder is supposed to be created dynamically when running the script. It’s added to `~/webapps/appname/.well-known`. It is where the script places a code, which then sends an API request to the Let’s Encrypt server. The server API checks if the requested code can be generated on the domain. The whole point is to verify that you have control of the domain and have permission to be issuing certs on its behalf.
 
-However, a lot of people seem to get errors related to this folder (this author included). I’ll add troubleshooting tips here as I learn them.
+A lot of people seem to get errors related to this folder (this author included). However, it’s not (or rarely) a problem with the folder, per se, and more a problem with your site configuration in the WebFaction dashboard. But if you follow these instructions, you might make it through unscathed.
 
-(Note: If your webapp is a Django or Rails app, see Greg Brown’s [usage notes](https://github.com/gregplaysguitar/acme-webfaction#usage).)
+(Note: If your webapp is a Django or Rails app, see Greg Brown’s [usage notes](https://github.com/gregplaysguitar/acme-webfaction#usage) for different conditions.)
 
+## Example setup in WebFaction dashboard
+
+Let’s say you’re creating a cert for a new domain, domain2.tld. In the WebFaction dashboard you then create:
+
+* 2 new domains (domain2.tld AND www.domain2.tld)
+* 4 new websites (names here are sensible examples):
+	* domain2
+	* domain2_ssl
+	* domain2_www
+	* domain2_www_ssl
+* 1 application (“domain2”, or whatever makes sense to you). Base it on whatever tech you need (e.g. php 7.2).
+
+For the “www” domain (www.domain2.tld), configure it to be a CNAME that points to the other domain (domain2.tld).
+
+For the four websites, assign them to their corresponding domains with or without “www”:
+
+* domain2 —> domain2.tld
+* domain2_ssl —> domain2.tld
+* domain2_www —> www.domain2.tld
+* domain2_www_ssl —> www.domain2.tld 
+
+For security settings on the websites, make the two “ssl” websites as “Encrypted  website (https)” and assign, temporarily to the “Shared certificate” option. You’ll change that later when your certificate is created.
+
+Assign all four websites to the “domain2” app.
+
+Now, lets get a certificate.
+ 
 ## Install acme.sh
 
-If you don’t already have it, you need to install acme.sh. (If you have it, you might want to update it.) 
+First, tunnel into your WebFaction server using SSH.
 
-Tunnel into your WebFaction server using SSH, then run the following two commands (one at a time):
+If you already used Neil Pang’s acme.sh script, you should have this installed already and just need to update it:
+
+```
+cd ~/src
+acme.sh --upgrade
+```
+
+If you don’t already have acme.sh installed, install it now from your user directory: 
 
 ```
 cd ~
 curl https://get.acme.sh | sh
 ```
 
-This will add acme.sh to `~/src`. Close and reopen your command-line client to enable using it. Only needed once.
+This will add acme.sh to `~/src`. 
 
-If you already have acme.sh installed, just udpate it by running these two commands (one at a time):
-
-```
-cd ~/src
-acme.sh --upgrade
-```
+Close and reopen your command-line client to enable using it. Only needed once.
 
 ## Install _acme-webfaction.py_
 
