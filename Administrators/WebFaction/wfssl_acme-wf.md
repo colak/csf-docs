@@ -10,6 +10,8 @@ As a former user of Pang’s general acme.sh method, I have opted to use Greg Br
 
 Two things to know to get off on the right foot.
 
+### Scope of certifices
+
 First, something to keep in mind when you configure your cert assignments in the WebFaction dashboard… You can not have more than one (sub)domain per certificate, excluding the “www” configuration, which is allowed. For example, you can not apply a single cert to all of these:
 
 - domain.tld
@@ -19,7 +21,13 @@ First, something to keep in mind when you configure your cert assignments in the
 
 That requires 2 certificates, each applied to a domain with/without “www”. Cert 1 (domain.tld and www.domain.tld). Cert 2 (sub.domain.tld and www.sub.domain.tld).
 
-Second, to setup SSL certificates, there needs to be a ‘_.well-known_’ folder in your webapp folders first (i.e. `~/webapps/appname/.well-known`). The script should create this and populate it as needed automatically. (Note: If your webapp is a Django or Rails app, see Greg Brown’s [usage notes](https://github.com/gregplaysguitar/acme-webfaction#usage).)
+### _.well-known_ folder
+
+The _.well-known_ folder is supposed to be created dynamically when running the script. It’s added to `~/webapps/appname/.well-known`. It is where the script places a code, it then sends an API request to the Let’s Encrypt server, and their API checks if the requested code can be generated on the domain. This process verifies that you have control of the domain and have permission to be issuing certs on its behalf.
+
+However, a lot of people seem to get errors related to this folder (this author included). I’ll add troubleshooting tips here as I learn them.
+
+(Note: If your webapp is a Django or Rails app, see Greg Brown’s [usage notes](https://github.com/gregplaysguitar/acme-webfaction#usage).)
 
 ## Install acme.sh
 
