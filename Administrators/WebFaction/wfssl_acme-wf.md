@@ -26,7 +26,7 @@ Second, to setup SSL certificates you need to create an empty ‘_.well-known_�
 Create the directory right away by tunneling (ssh) to WebFaction and running the following command for each site you’re setting certificates up for (change `appname` to the name of your website’s app):
 
 ```
-mkdr ~/webapps/appname/.well-known
+mkdir ~/webapps/appname/.well-known
 ```
 
 Good. Let’s begin.
