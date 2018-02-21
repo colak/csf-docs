@@ -6,8 +6,6 @@ Since then, other options have become available that are specifically for WebFac
 
 As a former user of Pang’s general acme.sh method, I have opted to use Greg Brown’s _acme-webfaction_ approach, which I describe here. It seems to be a little simpler on the surface.
 
-First a couple of notes…
-
 ## Notes in advance
 
 Two things to know to get off on the right foot.
