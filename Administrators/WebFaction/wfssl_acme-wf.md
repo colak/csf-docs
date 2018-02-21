@@ -21,15 +21,7 @@ First, something to keep in mind when you configure your cert assignments in the
 
 That requires 2 certificates, each applied to a domain with/without “www”. Cert 1 (domain.tld and www.domain.tld). Cert 2 (sub.domain.tld and www.sub.domain.tld).
 
-Second, to setup SSL certificates you need to create an empty ‘_.well-known_’ folder in your webapp folders first (i.e. `~/webapps/appname/.well-known`). (Note: If your webapp is a Django or Rails app, see Greg Brown’s [usage notes](https://github.com/gregplaysguitar/acme-webfaction#usage).)
-
-Create the directory right away by tunneling (ssh) to WebFaction and running the following command for each site you’re setting certificates up for (change `appname` to the name of your website’s app):
-
-```
-mkdir ~/webapps/appname/.well-known
-```
-
-Good. Let’s begin.
+Second, to setup SSL certificates, there needs to be a ‘_.well-known_’ folder in your webapp folders first (i.e. `~/webapps/appname/.well-known`). The script should create this and populate it as needed automatically. (Note: If your webapp is a Django or Rails app, see Greg Brown’s [usage notes](https://github.com/gregplaysguitar/acme-webfaction#usage).)
 
 ## Install acme.sh
 
