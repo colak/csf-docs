@@ -1,30 +1,30 @@
 # Let’s Encrypt certs on WebFaction with _acme-webfaction_
 
-There are different ways to setup Let’s Encrypt SSL certificates on WebFaction. [Neil Pang’s acme.sh shell](https://github.com/content-strategy-forum/csf-docs/blob/master/Administrators/WebFaction/wfssl-acme-pang.md) was (and still is) a good and supported method. But the acme.sh shell alone can’t auto-renew certs on WebFaction because of the particular way the host is setup. And in any case, acme.sh by itself is a general LE approach for many host situations, not just WebFaction. 
+There are different ways to setup [Let’s Encrypt](https://letsencrypt.org) (LE) SSL certificates on WebFaction. [Neil Pang’s acme.sh shell](https://github.com/content-strategy-forum/csf-docs/blob/master/Administrators/WebFaction/wfssl-acme-pang.md) is one good way, though by itself you can’t automatically renew certificates on WebFaction because of the particular way the host is setup. In any case, acme.sh by itself is a general LE approach for many host situations, not just WebFaction. 
 
-Other options now exist specifically for WebFaction and include automatic renewal of certificates. Two such alternate methods are [letsencrypt_webfaction](https://github.com/will-in-wi/letsencrypt-webfaction) script (a Ruby gems method), and [acme-webfaction](https://github.com/gregplaysguitar/acme-webfaction) (using acme.sh and a Python script). WebFaction even recommeds these to its customers in support tickets and the community forum.
+Other options now exist specifically for WebFaction and include automatic renewal of certificates. Two such alternate methods are [letsencrypt_webfaction](https://github.com/will-in-wi/letsencrypt-webfaction) (a Ruby gems method), and Greb Brown’ [acme-webfaction](https://github.com/gregplaysguitar/acme-webfaction) method, which employs a Python script to help with the auto-renewals.
 
-As someone who liked using the acme.sh shell before (and still a clean choice if you don’t mind doing manual updates of your certs), I have opted to describe the _acme-webfaction_ approach here. The _acme-webfaction_ method seems a little simpler than the _letsencrypt_webfaction_ method.
+As someone who liked using the acme.sh shell before, I’ve opted to describe the _acme-webfaction_ approach here, which seems less fiddly than the _letsencrypt_webfaction_ method. If you can follow Mr. Brown’s abbreviated intructions at the link above, feel free. My tutorial is considerably more thorough for non-dev types like myself. 
 
-This tutorial is written with the assumption you have never set up Let’s Encrypt certs on WebFaction before, and you’re using the Mac Terminal.app. ;)
+This tutorial is written with the assumption you have never set up Let’s Encrypt certs on WebFaction before, and you’re using the Mac Terminal.app.
 
-## A) Things to know
+## A) Insights
 
-Before you begin, you might be aware of these overhead relevances.
+The three-mile high perspective.
 
 ### About Let’s Encrypt and rate limites
 
-[Let’s Encrypt](https://letsencrypt.org) (LE) is a Certificate Resource Authority (CRA) that provides free Secure Socket Layer (SSL) certificates. You can read through LE’s documentation, but there’s a couple things worth highlighting here.
+[Let’s Encrypt](https://letsencrypt.org) is a Certificate Resource Authority (CRA) that provides free Secure Socket Layer (SSL) certificates. You can read through LE’s documentation, but there’s a couple things worth highlighting here.
 
-Be sure to understand LE [rate limits](https://letsencrypt.org/docs/rate-limits/), especially the limit about **5 certificates per week for duplicate certificates** (i.e. certs that contain the exact same set of hostnames, ignoring capitalization and ordering of hostnames).
+Be sure to understand [rate limits](https://letsencrypt.org/docs/rate-limits/), especially the limit about **5 certificates per week for duplicate certificates** (i.e. certs that contain the exact same set of hostnames, ignoring capitalization and ordering of hostnames).
 
-What this means is you can’t just create certs willy-nilly if you don’t have things setup correctly and have to keep doing it over. You’ll exceed your limit and have to wait 7 days before you can try to create your certs again. 
+This means you can’t create certs helter-skelter if you don’t have things setup correctly and need to keep doing it over. You’ll exceed your limit and have to wait 7 days before you can try to create your certs again. 
 
-You’re advised to run test certs first, which the limit does not apply against, to make sure it all works correctly. When it does, then run the real request and avoid hitting the limit. The test procedure is covered in these instructions.
+You’re advised to run test certs first to make sure everything works, which don’t apply against the limit. When all is fine, then run the real request and avoid hitting the limit. The test procedure is covered in these instructions.
 
 ### acme.sh
 
-This LE method for WebFaction uses Neil Pang’s excellent [_acme.sh_](https://github.com/Neilpang/acme.sh.git), which is a highly-configurable “pure-shell” implementation of the [Automatic Certificate Management Environment](https://github.com/ietf-wg-acme/acme) (ACME), and takes the place of using Certbot, which LE describes on it’s own site. 
+Neil Pang’s excellent [_acme.sh_](https://github.com/Neilpang/acme.sh.git) software is a highly-configurable shell implementation of the [Automatic Certificate Management Environment](https://github.com/ietf-wg-acme/acme) (ACME), and takes the place of using Certbot, which LE describes on its own site. 
 
 Everything you need to know about it is in the commands in this tutorial, but you can read up on the full set of _acme.sh_ command [options and parameters](https://github.com/Neilpang/acme.sh/wiki/Options-and-Params) if you like.
 
