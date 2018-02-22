@@ -2,15 +2,15 @@
 
 There are different ways to setup [Let’s Encrypt](https://letsencrypt.org) (LE) SSL certificates on WebFaction. [Neil Pang’s acme.sh shell](https://github.com/content-strategy-forum/csf-docs/blob/master/Administrators/WebFaction/wfssl-acme-pang.md) is one good way, though by itself you can’t automatically renew certificates on WebFaction because of the particular way the host is setup. In any case, acme.sh by itself is a general LE approach for many host situations, not just WebFaction. 
 
-Other options now exist specifically for WebFaction and include automatic renewal of certificates. Two such alternate methods are [letsencrypt_webfaction](https://github.com/will-in-wi/letsencrypt-webfaction) (a Ruby gems method), and Greb Brown’ [acme-webfaction](https://github.com/gregplaysguitar/acme-webfaction) method, which employs a Python script to help with the auto-renewals.
+Other options now exist specifically for WebFaction and include automatic renewal of certificates. Two such alternate methods are [letsencrypt_webfaction](https://github.com/will-in-wi/letsencrypt-webfaction) (a Ruby gems method), and Greg Brown’ [acme-webfaction](https://github.com/gregplaysguitar/acme-webfaction) method, which employs a Python script in relation to a crontab and WebFaction’s API to help with the auto-renewals.
 
-As someone who liked using the acme.sh shell before, I’ve opted to describe the _acme-webfaction_ approach here, which seems less fiddly than the _letsencrypt_webfaction_ method. If you can follow Mr. Brown’s abbreviated intructions at the link above, feel free. My tutorial is considerably more thorough for non-dev types like myself. 
+As someone who liked using the acme.sh shell before, I’ve opted to describe the _acme-webfaction_ approach here, which seems less fiddly than the _letsencrypt_webfaction_ method. If you can follow Mr. Brown’s abbreviated intructions at the link above, feel free. My tutorial is considerably more thorough for those like me who need the clarity and plain language. 
 
 This tutorial is written with the assumption you have never set up Let’s Encrypt certs on WebFaction before, and you’re using the Mac Terminal.app.
 
-## A) Insights
+## A) Three-mile high perspective
 
-The three-mile high perspective.
+General info that can make you a wiser certificater.
 
 ### About Let’s Encrypt and rate limites
 
