@@ -1,14 +1,14 @@
 # Let’s Encrypt certs on WebFaction with _acme-webfaction_
 
-There are different ways to setup Let’s Encrypt SSL certificates on WebFaction. [Neil Pang’s acme.sh application](https://github.com/content-strategy-forum/csf-docs/blob/master/Administrators/WebFaction/wfssl-acme-pang.md) was (and still is) a common and well-supported method before WebFaction started advancing it’s own support for Let’s Encrypt (LE). “The Pang” method is a general LE approach for many host situations, not just WebFaction. 
+There are different ways to setup Let’s Encrypt SSL certificates on WebFaction. [Neil Pang’s acme.sh shell](https://github.com/content-strategy-forum/csf-docs/blob/master/Administrators/WebFaction/wfssl-acme-pang.md) was (and still is) a good and supported method. But the acme.sh shell alone can’t auto-renew certs on WebFaction because of the particular way the host is setup. And in any case, acme.sh by itself is a general LE approach for many host situations, not just WebFaction. 
 
-Now other options have become available that are specifically for WebFaction and include the benefit of automatic renewal of certificates too. Two such alternate methods, which even WebFaction recommeds to it’s customers, are [letsencrypt_webfaction](https://github.com/will-in-wi/letsencrypt-webfaction) script (a Ruby gems method), and [acme-webfaction](https://github.com/gregplaysguitar/acme-webfaction) (using acme.sh and a Python script).
+Other options now exist specifically for WebFaction and include automatic renewal of certificates. Two such alternate methods are [letsencrypt_webfaction](https://github.com/will-in-wi/letsencrypt-webfaction) script (a Ruby gems method), and [acme-webfaction](https://github.com/gregplaysguitar/acme-webfaction) (using acme.sh and a Python script). WebFaction even recommeds these to its customers in support tickets and the community forum.
 
-As someone who liked using Pang’s general acme.sh method (and still a clean choice if you don’t mind doing manual updates of your certs), I have opted to describe the _acme-webfaction_ approach here. The _acme-webfaction_ method seems a little simpler than the _letsencrypt_webfaction_ method.
+As someone who liked using the acme.sh shell before (and still a clean choice if you don’t mind doing manual updates of your certs), I have opted to describe the _acme-webfaction_ approach here. The _acme-webfaction_ method seems a little simpler than the _letsencrypt_webfaction_ method.
 
-This tutorial is written with the assumption you have never set up Let’s Encrypt certs on WebFaction before, and you’re using a Mac. ;)
+This tutorial is written with the assumption you have never set up Let’s Encrypt certs on WebFaction before, and you’re using the Mac Terminal.app. ;)
 
-## Things to know
+## A) Things to know
 
 Before you begin, you might be aware of these overhead relevances.
 
@@ -65,7 +65,7 @@ The acme.sh script places a code in there, which then sends an API request to th
 
 A lot of people seem to get verification errors related to this folder (this author has). However, it’s rarely a problem with the folder (or the creation of it), per se, and more a problem with your WebFaction dashboard configurations. Because, let’s admit, it’s very easy to make soup in the WebFaction dashboard when creating and mixing “domains”, “websites”, “applications”, and “certifications”. You must double check and triple check how everything is lined up. But if you follow these instructions, you might make it through unscathed.
 
-## Example setup in WebFaction dashboard
+## B) Example setup in WebFaction dashboard
 
 Speakign of dashboard setup, let’s say you’re creating your first cert for **domain.tld**. (This process would be the same if it was for a subdomain like **sub.domain.tld**.) You then create all of the following in their respective dashboard locations under **Domains / Websites**.
 
@@ -131,7 +131,7 @@ Assign all four websites to the **le_validation** application. This is temporary
 
 Now, let’s create a certificate! 
  
-## Install acme.sh
+## C) Install acme.sh
 
 First, tunnel into your WebFaction server using SSH.
 
@@ -153,7 +153,7 @@ This will add acme.sh to `~/src`.
 
 Close and reopen your command-line client to enable using it. Only need to do this once upon first installation.
 
-## Install _acme-webfaction.py_
+## D) Install _acme-webfaction.py_
 
 Next you need to install Greg Brown’s _acme-webfaction_ python script. Run the following command:
 
@@ -173,7 +173,7 @@ Change permissions on file:
 chmod +x ~/bin/acme_webfaction.py
 ```
 
-## Run a test certificate
+## E) Run a test certificate
 
 As explained earlier, you should test before trying to create real certs. Do a test now buy running the following (note the important `--test` parameter added in the command), where `domain` is the name of your actual website’s desired application (discussed in example setup earlier), and `domain.tld` is the actual domain. (Chances are you named your app the same as the domain, so all instances of “domain” are the same. Remember to correct the `tld` extension too):
 
@@ -222,7 +222,7 @@ rm -R ~/.acme.sh/domain.tld
 
 However, if you get the test cert without errors, as desired and described above. Your ready for the real thing.
 
-## 6) Create the real certificate(s)
+## F) Create the real certificate(s)
 
 Before running the real certs request, remove the test certificate directory you just created if you haven’t already:
 
@@ -244,7 +244,7 @@ acme.sh --issue -w ~/webapps/domain -d domain.tld -d www.domain.tld
 
 You should see the same desired output as before with the test, except now you have real certificate(s) ready for use.
 
-## Create WebFaction certificate
+## G) Create WebFaction certificate
 
 Jump over to your WebFaction dashboard again under **Domains / Websites** and create a new certificate for the one you just generated as follows:
 
@@ -269,32 +269,45 @@ Now go to the WebFaction **Websites** list. You’ll assign the new certs to the
 
 Repeat for the other “ssl” website name.
 
-You should now have working SSL certificates in your WebFaction website, which should be apparent in the front-end after propagating.
-
 If you go back to the certificates list in the dashboard, you’ll be shown how long the certificates last until they need renewed.
+
+## H) Switch to real app
+
+Switch to the websites list in the dashboard and change the assigned application on all four website names from the temporary _le_validation_ app to your actual _domain_ app (or whatever your real application name is for the site).
+
+You should now have working SSL certificates in your WebFaction website, which should be apparent in the front-end after propagating.
 
 Give yourself a backslap.
 
-Now, you could stop here and renew certs manually every time, which is not a big deal, frankly. It only takes the time to drink a cappacino.
+***
 
-Or you can do the final step, create the cron job that renews them automatically.
+Now, you could stop here and renew certs manually every time, which is not a big deal, frankly. It only takes the time to make and drink an espresso once every 2 months. In a nutshell you:
+
+1. Update the acme.sh shell in case there were updates to it:
+	1. `cd ~/src`
+	2. `acme.sh --upgrade` 
+2. Run a new test cert, if nervous (see section E). 
+3. Run a real cert (see section F).
+4. Update the ‘domain_cert’ record by copy/pasting new cert hashes into the respective fields.
+
+Or you can do the final step below, create the cron job that renews them automatically, which is why we installed Greg Brown’s python script, and what distinguishes this method from a regular acme.sh shell method.
 
 ## Create renewal cron job
 
 Here you install the certificate so it’s bound to the one created in the dashboard, and set a cron job for it to renew automatically.
 
-Run the command below, making the these changes:
+Run the command below, making the these changes and correcting your domain names in the command:
 
 * `WF_SERVER`: Your webfaction server name (e.g. `WebXXX`), replacing “xxx” with your server number. The title-case on `Web` is _mandatory_.
 * `WF_USER` and `WF_PASSWORD`: Your WebFaction control panel login credentials.
 * `WF_CERT_NAME`: Name of the certificate you created in dashboard in previous step (i.e. _domain_cert_, correcting for ‘domain`).
 
 ```
-acme.sh --install-cert -d example.com -d www.example.com \
+acme.sh --install-cert -d domain.tld -d www.domain.tld \
  --reloadcmd "WF_SERVER=WebXX WF_USER=user WF_PASSWORD=pass WF_CERT_NAME=certname acme_webfaction.py
 ```
 
-Now you have an acme.sh crontab entry that renews the certificate automatically, and, on renewal, will trigger _acme_webfaction.py_ to update the certificate via the WebFaction API.
+Now you have an acme.sh crontab entry that renews the certificate automatically, and, on renewal, will trigger _acme_webfaction.py_ to update the certificate via the WebFaction API every 2 months (I think).
 
 You can test that it’s working by forcing a renewal. (Keep in mind this counts against your weekly duplicate rate limit of 5.) Run the following command from the crontab with `--force` appended (change `USER` to your user directory name):
 
